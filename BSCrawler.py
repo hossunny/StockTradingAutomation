@@ -1,3 +1,4 @@
+import logging, os
 import requests, glob
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -15,6 +16,8 @@ import matplotlib.pyplot as plt
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+import warnings
+warnings.filterwarnings(action='ignore')
 
 class BSCrawler:
     def __init__(self, argv):
@@ -23,6 +26,17 @@ class BSCrawler:
         self.update_date = datetime.today().strftime('%Y-%m-%d')
         self.conn = pymysql.connect(host='localhost',user='root',
                                    password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        self.logger.addHandler(stream_handler)
+        file_handler = logging.FileHandler('BSCrawling.log')
+        file_handler.setFormatter(formatter)
+        self.logger.addHandler(file_handler)
+        self.logger.info(f'Starting BSCrawler -> date : {self.update_date}')
+        
         with self.conn.cursor() as curs:
             sql_load = """
             SELECT CODE, COMPANY FROM COMPANY_INFO
@@ -32,8 +46,7 @@ class BSCrawler:
             self.codes = [str(e[0]) for e in comps_ls]
             self.comps = [str(e[1]) for e in comps_ls]
             
-        self.conn.commit()
-        
+        self.conn.commit() # May not be needed..        
         self.url = 'https://finance.naver.com/item/coinfo.nhn?code={}&target=finsum_more'
         
     def __del__(self):
@@ -56,14 +69,22 @@ class BSCrawler:
     
     def crawler(self):
         browser = Chrome(self.driver_path)
-        t=[]
-        for idx, cds in enumerate(self.codes[:5]):
+        for idx, cds in enumerate(self.codes):
+            try: 
+                if os.path.isfile(glob.glob('./FullCache/Annual/*{}*'.format(cds))[0]):
+                    continue
+            except :
+                pass
+            print("Crawling *Annual* Financial Summary of *{}*...".format(self.comps[idx]+'-'+cds))
             url = self.url.format(cds)
             requests.get(url).raise_for_status()
             browser.get(url)
-            browser.switch_to.frame(browser.find_element_by_id('coinfo_cp'))
-            print("Crwaling *Annual* Financial Summary of *{}*...".format(self.comps[idx]+'-'+cds))
-            WebDriverWait(browser, 2).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="cns_Tab21"]')))
+            try :
+                browser.switch_to.frame(browser.find_element_by_id('coinfo_cp'))
+                WebDriverWait(browser, 2).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="cns_Tab21"]')))
+            except :
+                self.logger.error(f'There is no *coinfo_cp* about this company -> {self.comps[idx]+"-"+cds}')
+                continue
             browser.find_elements_by_xpath('//*[@id="cns_Tab21"]')[0].click()
             html = BeautifulSoup(browser.page_source, 'html.parser')
             html_Y = html.find('table',{'class':'gHead01 all-width','summary':'주요재무정보를 제공합니다.'}) 
@@ -92,11 +113,11 @@ class BSCrawler:
 
                 values.append(value_tmp)
             df = pd.DataFrame(data=values, columns=dates, index=cols)
-            EmptyChecker(df, cds)
-            last_info_date = DataExistChecker(df)
-            df.to_hdf(f'./FullCache/Annual/fs_annual_{cds}_{last_info_date}_{self.update_date}.h5',key=cds,mode='w')
+            self.EmptyChecker(df, cds)
+            #last_info_date = self.DataExistChecker(df)
+            df.to_hdf(f'./FullCache/Annual/fs_annual_{cds}_{self.update_date}.h5',key=cds,mode='w')
             
-            print("Crwaling *Quarter* Financial Summary of *{}*...".format(self.comps[idx]+'-'+cds))
+            print("Crawling *Quarter* Financial Summary of *{}*...".format(self.comps[idx]+'-'+cds))
             WebDriverWait(browser, 1).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="cns_Tab22"]')))
             browser.find_elements_by_xpath('//*[@id="cns_Tab22"]')[0].click()
             html = BeautifulSoup(browser.page_source, 'html.parser')
@@ -118,19 +139,18 @@ class BSCrawler:
                 for j in range(len(tmp)):
                     try :
                         if tmp[j].text == '':
-                            value_tmp.append(0.0)
+                            value_tmp.append(-999.9)
                         else:
                             value_tmp.append(float(tmp[j].text.replace(',','')))
                     except :
-                        value_tmp.append(-1.0)
+                        value_tmp.append(-999.9)
 
                 values.append(value_tmp)
             df = pd.DataFrame(data=values, columns=dates, index=cols)
-            EmptyChecker(df, cds)
-            last_info_date = DataExistChecker(df)
-            df.to_hdf(f'./FullCache/Quarter/fs_quarter_{cds}_{last_info_date}_{self.update_date}.h5',key=cds,mode='w')
+            self.EmptyChecker(df, cds)
+            #last_info_date = self.DataExistChecker(df)
+            df.to_hdf(f'./FullCache/Quarter/fs_quarter_{cds}_{self.update_date}.h5',key=cds,mode='w')
             
-            #t.append(df)
         return "Cache generation is well done." 
 
 if __name__ == '__main__':
