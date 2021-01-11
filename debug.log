@@ -2,3 +2,15 @@
 [0109/165332.806:ERROR:directory_reader_win.cc(43)] FindFirstFile: 지정된 경로를 찾을 수 없습니다. (0x3)
 [0109/170512.409:ERROR:directory_reader_win.cc(43)] FindFirstFile: 지정된 경로를 찾을 수 없습니다. (0x3)
 [0109/204735.606:ERROR:directory_reader_win.cc(43)] FindFirstFile: 지정된 경로를 찾을 수 없습니다. (0x3)
+[0110/132149.322:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0110/132149.324:ERROR:exception_snapshot_win.cc(99)] thread ID 2796 not found in process
+[0110/132149.333:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0110/132149.334:ERROR:exception_snapshot_win.cc(99)] thread ID 8276 not found in process
+[0110/132149.335:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0110/132149.340:ERROR:exception_snapshot_win.cc(99)] thread ID 220 not found in process
+[0110/132149.417:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0110/132149.417:ERROR:process_reader_win.cc(123)] NtOpenThread: {액세스 거부} 프로세스가 개체에 액세스를 요구했지만 액세스 권한이 없습니다. (0xc0000022)
+[0110/132149.417:ERROR:exception_snapshot_win.cc(99)] thread ID 10116 not found in process
+[0110/132149.417:ERROR:exception_snapshot_win.cc(99)] thread ID 11608 not found in process
+[0111/115028.376:ERROR:directory_reader_win.cc(43)] FindFirstFile: 지정된 경로를 찾을 수 없습니다. (0x3)
+[0111/121010.615:ERROR:directory_reader_win.cc(43)] FindFirstFile: 지정된 경로를 찾을 수 없습니다. (0x3)
