@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from pykrx import stock
 import warnings
 warnings.filterwarnings(action='ignore')
 
@@ -159,6 +160,40 @@ class BSCrawler:
                     elif tmp_prices[idx+1] <= float(tmp_prices[idx]) / pwrs :
                         stsplt_comps.append((cd,tmp_df.index[idx],tmp_prices[idx],tmp_df.index[idx+1],tmp_prices[idx+1]))
         return stsplt_comps, revsplt_comps    
+    
+    def TimeInverter(self, dt, hyphen=False):
+        Y = str(dt.year)
+        M = '0'+str(dt.month) if int(dt.month)<10 else str(dt.month)
+        D = '0'+str(dt.day) if int(dt.day)<10 else str(dt.day)
+        if hyphen :
+            return Y+'-'+M+'-'+D
+        else :
+            return Y+M+D
+    
+    def AdjPriceMerge(self):
+        self.logger.info('Merging AdjPrice from krx with my DB.')
+        for cd in self.codes :
+            sql = f"select min(date), max(date) from daily_price where code='{cd}'"
+            cursor = self.conn.cursor()
+            cursor.execute(sql)
+            rst = cursor.fetchone()
+            min_date, max_date = rst[0], rst[1]
+            min_date = self.TimeInverter(min_date)
+            max_date = self.TimeInverter(max_date)
+            tmp_df = stock.get_market_ohlcv_by_date(min_date, max_date, cd, adjusted=True)
+            adj_values = tmp_df['종가'].values
+            dt_values = tmp_df.index
+            dt_values = [self.TimeInverter(dt, hyphen=True) for dt in dt_values]
+            for idx, adjp in enumerate(adj_values):
+                try :
+                    update_sql = f"update daily_price set adjprice = {int(adjp)} where code = '{cd}' and date = '{dt_values[idx]}'"
+                    cursor.execute(update_sql)
+                except :
+                    self.logger.error('Merging is failed. : {}'.format((cd, dt_values[idx], int(adjp))))
+                    raise ValueError("Exception is occured by merging adjprice error. Check the log.")
+        self.conn.commit()
+        self.logger.info("Merging Adjprice is well done.")
+        return "Merging Adjprice is well done."
         
     def Crawler(self):
         browser = Chrome(self.driver_path)

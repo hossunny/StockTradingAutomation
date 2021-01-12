@@ -17,12 +17,15 @@ import matplotlib.pyplot as plt
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from pykrx import stock
+import warnings
+warnings.filterwarnings(action='ignore')
 
 class Loader:
     def __init__(self):
         """Naver Finance : Financial Summary Crawler"""
         self.conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='secret><',db='INVESTAR',charset='utf8')
         with self.conn.cursor() as curs:
             sql_load = """
             SELECT CODE, COMPANY FROM COMPANY_INFO
