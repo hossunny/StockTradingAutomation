@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
 import time
+from datetime import date
 import urllib.request
 from selenium.webdriver import Chrome
 import json, re, sys, h5py
@@ -123,7 +124,41 @@ class BSCrawler:
         with open('./updateinfo_{}.pickle'.format(unit),'wb') as fw:
             pickle.dump(self.updateinfo, fw) 
         self.logger.info('Updating UpdateInfo Dictionary is done.')
-        
+
+    def DelistingChecker(self, ndays=30):
+        dels_comps = []
+        for cd in self.codes:
+            sql = f"SELECT DATE FROM DAILY_PRICE WHERE CODE = '{cd}';"
+            temp_dates = list(pd.read_sql(sql, self.conn)['DATE'])
+            temp_dates = [str(dt) for dt in temp_dates]
+            temp_dates = [date(int(dt[:4]),int(dt[5:7]),int(dt[8:])) for dt in temp_dates]
+            diff_day = 0
+            for idx in range(len(temp_dates)):
+                if idx != len(temp_dates)-1:
+                    diff_day = (temp_dates[idx+1] - temp_dates[idx]).days
+                    if diff_day >= ndays :
+                        dels_comps.append((cd,temp_dates[idx],temp_dates[idx+1]))
+        return dels_comps
+    
+    def StockSplitChecker(self, pwrs=2):
+        stsplt_comps = [] # 액면 분할
+        revsplt_comps = [] # 액면 병합
+        for cd in self.codes:
+            if cd in ['013890','037030']:#self.DelistingChecker(30):
+                continue
+            sql = f"SELECT DATE, CLOSE FROM DAILY_PRICE WHERE CODE = '{cd}';"
+            tmp_df = pd.read_sql(sql,self.conn)
+            tmp_df.index = list(tmp_df['DATE'])
+            tmp_df.drop(['DATE'], axis=1, inplace=True)
+            tmp_df.sort_index(inplace=True)
+            tmp_prices = list(tmp_df['CLOSE'])
+            for idx in range(len(tmp_prices)):
+                if idx != len(tmp_prices)-1:
+                    if tmp_prices[idx+1] >= tmp_prices[idx]*pwrs :
+                        revsplt_comps.append((cd,tmp_df.index[idx],tmp_prices[idx],tmp_df.index[idx+1],tmp_prices[idx+1]))
+                    elif tmp_prices[idx+1] <= float(tmp_prices[idx]) / pwrs :
+                        stsplt_comps.append((cd,tmp_df.index[idx],tmp_prices[idx],tmp_df.index[idx+1],tmp_prices[idx+1]))
+        return stsplt_comps, revsplt_comps    
         
     def Crawler(self):
         browser = Chrome(self.driver_path)
@@ -235,3 +270,5 @@ if __name__ == '__main__':
     print("Mode you requested : {}".format(argument[0]))
     bs_crawler = BSCrawler(argument[0])
     bs_crawler.Crawler()
+    bs_crawler.UpdateDataInfo('Annual')
+    bs_crawler.UpdateDataInfo('Quarter')

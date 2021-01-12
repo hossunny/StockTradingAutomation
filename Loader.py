@@ -1,9 +1,11 @@
+import logging, os, pickle
 import requests, glob
 from datetime import datetime
 from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
 import time
+from datetime import date
 import urllib.request
 from selenium.webdriver import Chrome
 import json, re, sys, h5py
@@ -47,14 +49,35 @@ class Loader:
     def PriceLoader(self, start, end, code_ls, item='close'):
         total = pd.DataFrame()
         for cd in code_ls :
-            sql = f"SELECT DATE, {item} FROM DAILY_PRICE WHERE CODE = '{cd}' AND DATE BETWEEN {start} AND {end};"
+            sql = f"SELECT DATE, {item} FROM DAILY_PRICE WHERE CODE = '{cd}' AND DATE BETWEEN '{start}' AND '{end}';"
             tmp_df = pd.read_sql(sql, self.conn)
-            print(tmp_df)
-            tmp_df.index = list(tmp_df['date'])
-            tmp_df.drop(['date'], axis=1, inplace=True)
+            tmp_df.index = list(tmp_df['DATE'])
+            tmp_df.drop(['DATE'], axis=1, inplace=True)
             tmp_df.columns = [self.FindNameByCode(str(cd))]
             total = pd.concat([total, tmp_df], axis=1)
         total.sort_index(inplace=True)
+        return total
+    
+    def BSLoader_v1(self, start, end, code_ls, item='EPS', unit='Annual'):
+        """ Cache를 바로 parsing해서 만드는 lv2 matrix """
+        """ 생각해보니까 DB에 넣어도 되잖아? (CODE,DATE)를 Primary Key로 하면.. """
+        """ 중요한 점은 이런 BS DATA는 알게 되는 날짜가 한참 뒤라는 거네."""
+        if item not in self.items:
+            for itm in self.items :
+                if item in itm :
+                    item = itm
+        total = pd.DataFrame()
+        for cd in code_ls:
+            tmp = pd.read_hdf(glob.glob(f'./FullCache/{unit}/fs_{unit.lower()}_{cd}_*')[0], key=cd, mode='r')
+            tmp_cols = []
+            for dt in tmp.columns :
+                if dt >= start[:7] and dt <= end[:7] :
+                    tmp_cols.append(dt)
+            tmp_df = pd.DataFrame(data=tmp[tmp_cols].loc[item,:])
+            comp_nm = self.FindNameByCode(cd)
+            tmp_df.columns = [comp_nm] # list('abc') -> ['a','b','c'] || ['abc'] -> ['abc'] !!!
+            tmp_df.sort_index(ascending=True, inplace=True)
+            total = pd.concat([total, tmp_df],axis=1)
         return total
 
 
