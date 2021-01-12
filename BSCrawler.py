@@ -25,7 +25,7 @@ class BSCrawler:
         self.driver_path = "C:/Users/Bae Kyungmo/OneDrive/Desktop/WC_basic/chromedriver.exe"
         self.update_date = datetime.today().strftime('%Y-%m-%d')
         self.conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='secret><',db='INVESTAR',charset='utf8')
         self.logger = logging.getLogger()
         self.logger.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -137,6 +137,7 @@ class BSCrawler:
             url = self.url.format(cds)
             requests.get(url).raise_for_status()
             browser.get(url)
+            time.sleep(2)
             try :
                 browser.switch_to.frame(browser.find_element_by_id('coinfo_cp'))
                 WebDriverWait(browser, 2).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="cns_Tab21"]')))
