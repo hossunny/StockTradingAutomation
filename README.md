@@ -17,6 +17,10 @@ trading automation using machine learning and quant-methodologies.
 * https://shinminyong.tistory.com/15
 * https://www.youtube.com/watch?v=Y01D2J_7894
 * 파이썬 증권 데이터 분석 - 김황후 저
+* https://github.com/sharebook-kr/pykrx
+* https://github.com/josw123/dart-fss
+* https://github.com/FinanceData/OpenDartReader
+* https://blog.naver.com/PostView.nhn?blogId=freed0om&logNo=221971659619&parentCategoryNo=64&categoryNo=67&viewDate=&isShowPopularPosts=false&from=postList
 
 ### Environments
 * python 3.6.11
