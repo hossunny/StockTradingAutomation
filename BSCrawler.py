@@ -1,4 +1,4 @@
-import logging, os
+import logging, os, pickle
 import requests, glob
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -35,6 +35,7 @@ class BSCrawler:
         file_handler = logging.FileHandler('BSCrawling.log')
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
+        self.logger.info('=======================================================================')
         self.logger.info(f'Starting BSCrawler -> date : {self.update_date}')
         
         with self.conn.cursor() as curs:
@@ -67,7 +68,64 @@ class BSCrawler:
         if df.shape[0] == 0 or df.shape[1] == 0:
             raise ValueError("There is no info in this dataframe!! : {}".format(cds))
     
-    def crawler(self):
+    def DataValidation(self, values):
+        flag = False
+        cnt = 0
+        for i in range(len(values)):
+            for j in range(len(values[i])):
+                if values[i][j] != 0.0:
+                    flag = True
+                    cnt += 1
+        return flag, cnt
+    
+    def UpdateDataInfo(self, unit='Annual'):
+        # unit : Annual / Quarter
+        try:
+            with open('./updateinfo_{}.pickle'.format(unit),'rb') as fr:
+                self.updateinfo = pickle.load(fr)
+        except:
+                self.updateinfo = {} 
+        self.logger.info(f'Updating data existence and its corresponding update info. -> date : {self.update_date}')
+        nocoinfo=[]
+        yescoinfo=[]
+        sub_dict={}
+        for cd in self.codes :
+            try :
+                if os.path.isfile(glob.glob('./FullCache/{}/*{}*'.format(unit,cd))[0]):
+                    yescoinfo.append(cd)
+                else :
+                    nocoinfo.append(cd)
+            except :
+                nocoinfo.append(cd)
+        """ N : No CoInfo / Y : Yes CoInfo / U : Update Notice"""
+        sub_dict['N'] = nocoinfo
+        sub_dict['Y'] = yescoinfo
+        new_info = []
+        if len(self.updateinfo.keys()) == 0 :
+            sub_dict['U'] = new_info
+        else :
+            prev_date = sorted(list(self.updateinfo.keys()))[-1]
+            prev_Y = self.updateinfo[prev_date]['Y']
+            prev_N = self.updateinfo[prev_date]['N']
+            diff_Y = list(set(prev_Y) - set(yescoinfo))
+            self.logger.info('diff_Y list : {}'.format(diff_Y))
+            if len(diff_Y) != 0 :
+                diff_Y = ['-'+e for e in diff_Y]
+            diff_N = list(set(prev_N) - set(nocoinfo))
+            self.logger.info('diff_N list : {}'.format(diff_Y))
+            if len(diff_N) != 0 :
+                for e in diff_N:
+                    if e in yescoinfo :
+                        new_info.append('+'+e)
+            new_info = diff_Y + new_info
+        sub_dict['U'] = new_info
+        self.updateinfo[self.update_date] = sub_dict
+        with open('./updateinfo_{}.pickle'.format(unit),'wb') as fw:
+            pickle.dump(self.updateinfo, fw) 
+        self.logger.info('Updating UpdateInfo Dictionary is done.')
+        
+        
+    def Crawler(self):
         browser = Chrome(self.driver_path)
         for idx, cds in enumerate(self.codes):
             try: 
@@ -90,6 +148,7 @@ class BSCrawler:
             html_Y = html.find('table',{'class':'gHead01 all-width','summary':'주요재무정보를 제공합니다.'}) 
             html_tmp = html_Y.find('thead').find_all('tr')[1].find_all('th',attrs={"class":re.compile("^r03c")})
             dates = [''.join(re.findall('[0-9/]',html_tmp[i].text)).replace('/','-') for i in range(len(html_tmp))]
+            dates = ['None'+str(idx) if e=='' else e for idx, e in enumerate(dates)]
             html_tmp = html_Y.find('tbody').find_all('tr')
             cols = []
             for i in range(len(html_tmp)):
@@ -112,6 +171,12 @@ class BSCrawler:
                         value_tmp.append(-1.0)
 
                 values.append(value_tmp)
+            flag, valid_nb = self.DataValidation(values)
+            if flag and valid_nb >= 10 :
+                pass
+            else :
+                self.logger.error(f'Not enough *coinfo_cp* about this company -> {self.comps[idx]+"-"+cds}')
+                continue
             df = pd.DataFrame(data=values, columns=dates, index=cols)
             self.EmptyChecker(df, cds)
             #last_info_date = self.DataExistChecker(df)
@@ -124,6 +189,7 @@ class BSCrawler:
             html_Y = html.find('table',{'class':'gHead01 all-width','summary':'주요재무정보를 제공합니다.'}) 
             html_tmp = html_Y.find('thead').find_all('tr')[1].find_all('th',attrs={"class":re.compile("^r03c")})
             dates = [''.join(re.findall('[0-9/]',html_tmp[i].text)).replace('/','-') for i in range(len(html_tmp))]
+            dates = ['None'+str(idx) if e=='' else e for idx, e in enumerate(dates)]
             html_tmp = html_Y.find('tbody').find_all('tr')
             cols = []
             for i in range(len(html_tmp)):
@@ -146,11 +212,19 @@ class BSCrawler:
                         value_tmp.append(-999.9)
 
                 values.append(value_tmp)
+            flag, valid_nb = self.DataValidation(values)
+            if flag and valid_nb >= 10 :
+                pass
+            else :
+                self.logger.error(f'Not enough *coinfo_cp* about this company -> {self.comps[idx]+"-"+cds}')
+                continue
             df = pd.DataFrame(data=values, columns=dates, index=cols)
             self.EmptyChecker(df, cds)
             #last_info_date = self.DataExistChecker(df)
             df.to_hdf(f'./FullCache/Quarter/fs_quarter_{cds}_{self.update_date}.h5',key=cds,mode='w')
-            
+        
+        self.logger.info(f'Cache generation is well done. : {self.update_date}')
+        self.logger.info('=======================================================================')        
         return "Cache generation is well done." 
 
 if __name__ == '__main__':
@@ -159,4 +233,4 @@ if __name__ == '__main__':
     del argument[0]
     print("Mode you requested : {}".format(argument[0]))
     bs_crawler = BSCrawler(argument[0])
-    bs_crawler.crawler()
+    bs_crawler.Crawler()
