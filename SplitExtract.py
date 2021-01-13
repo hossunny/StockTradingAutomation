@@ -84,6 +84,7 @@ class SplitExtract:
         return total, errors
 
     def DBSave(self, df):
+        errs = []
         cursor = self.conn.cursor()
         sql = """
             CREATE TABLE IF NOT EXISTS split_info (
@@ -96,13 +97,23 @@ class SplitExtract:
         self.conn.commit()
         
         for idx, row in df.iterrows():
-            print(f"INSERT INTO split_info (code,company,split) values({row.code},{row.company},{row.split_info})")
-            cursor.execute(f"INSERT INTO split_info values('{row.code}','{row.company}','{row.split_info}')")
-        self.conn.commit()
-        return "Uploading to DB is successfully finished."
+            if len(pd.read_sql(f"select * from split_info where code='{row.code}' and company='{row.company}'", self.conn)) == 0 :
+                try :
+                    #print(f"INSERT INTO split_info (code,company,split) values({row.code},{row.company},{row.split_info})")
+                    cursor.execute(f"INSERT INTO split_info values('{row.code}','{row.company}','{row.split_info}')")
+                    self.conn.commit()
+                except :
+                    if len(df[lambda x : x['code']==row.code].split_info.values[0]) >= 15 : #rough하게 VARCHAR(40) 안 넘도록
+                        short_info = '폭발|' + df[lambda x : x['code']==row.code].split_info.values[0][-15:]
+                        cursor.execute(f"INSERT INTO split_info values('{row.code}','{row.company}','{short_info}')")
+                        self.conn.commit()
+                    else :
+                        errs.append(row)
+        print("Uploading to DB is successfully finished.")
+        return errs #"Uploading to DB is successfully finished."
 
 if __name__ == '__main__':
     print("Starting SplitExtract Function...")
     spltexrt = SplitExtract()
     df, ers = spltexrt.Extractor()
-    spltexrt.DBSave(df)
+    dbers = spltexrt.DBSave(df)
