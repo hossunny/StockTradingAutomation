@@ -21,7 +21,7 @@ from pykrx import stock
 import warnings
 warnings.filterwarnings(action='ignore')
 import pyautogui
-
+import shutil
 
 class SplitExtract:
     def __init__(self):
@@ -52,7 +52,7 @@ class SplitExtract:
         errors = []
         browser = Chrome(self.driver_path)
         browser.maximize_window()
-        for ii, cd in enumerate(self.codes) :
+        for ii, cd in enumerate(self.codes[:100]) :
             try :
                 sub_ls = []
                 split_info = ''
@@ -83,7 +83,26 @@ class SplitExtract:
                 pickle.dump(errors, fw)
         return total, errors
 
+    def DBSave(self, df):
+        cursor = self.conn.cursor()
+        sql = """
+            CREATE TABLE IF NOT EXISTS split_info (
+                code VARCHAR(20),
+                company VARCHAR(40),
+                split VARCHAR(100),
+                PRIMARY KEY (code))
+            """
+        cursor.execute(sql)
+        self.conn.commit()
+        
+        for idx, row in df.iterrows():
+            print(f"INSERT INTO split_info (code,company,split) values({row.code},{row.company},{row.split_info})")
+            cursor.execute(f"INSERT INTO split_info values('{row.code}','{row.company}','{row.split_info}')")
+        self.conn.commit()
+        return "Uploading to DB is successfully finished."
+
 if __name__ == '__main__':
     print("Starting SplitExtract Function...")
-    spltexrt = SplitExtract(argument[0])
-    spltexrt.Extractor()
+    spltexrt = SplitExtract()
+    df, ers = spltexrt.Extractor()
+    spltexrt.DBSave(df)

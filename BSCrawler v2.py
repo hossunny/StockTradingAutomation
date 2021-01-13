@@ -20,6 +20,7 @@ from selenium.webdriver.common.by import By
 from pykrx import stock
 import warnings
 warnings.filterwarnings(action='ignore')
+import shutil
 
 class BSCrawler:
     def __init__(self, argv):
