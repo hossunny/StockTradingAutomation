@@ -174,28 +174,59 @@ class BSCrawler:
     
     def AdjPriceMerge(self):
         self.logger.info('Merging AdjPrice from krx with my DB.')
-        for cd in self.codes :
-            sql = f"select min(date), max(date) from daily_price where code='{cd}'"
-            cursor = self.conn.cursor()
-            cursor.execute(sql)
-            rst = cursor.fetchone()
-            min_date, max_date = rst[0], rst[1]
-            min_date = self.TimeInverter(min_date)
-            max_date = self.TimeInverter(max_date)
-            tmp_df = stock.get_market_ohlcv_by_date(min_date, max_date, cd, adjusted=True)
-            adj_values = tmp_df['종가'].values
-            dt_values = tmp_df.index
-            dt_values = [self.TimeInverter(dt, hyphen=True) for dt in dt_values]
-            for idx, adjp in enumerate(adj_values):
+        errors=[]
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT DISTINCT CODE FROM daily_price WHERE adjprice IS NULL")
+        nulls = cursor.fetchall()
+        nulls = [x[0] for x in nulls]
+        for cd in nulls : #self.codes :
+            try :
+                """
+                try_sql = f"select count(*) from daily_price where code='{cd}' and adjprice>0"
+                if cursor.execute(try_sql) == 0 :
+                    pass
+                else :
+                    if cursor.execute(f"select count(*) from daily_price where code='{cd}' and adjprice>0") < cursor.execute(f"select count(*) from daily_price where code='{cd}'"):
+                        pass
+                    else :
+                        continue
+                """
+                sql = f"select min(date), max(date) from daily_price where code='{cd}'"
+                cursor.execute(sql)
+                rst = cursor.fetchone()
+                min_date, max_date = rst[0], rst[1]
                 try :
-                    update_sql = f"update daily_price set adjprice = {int(adjp)} where code = '{cd}' and date = '{dt_values[idx]}'"
-                    cursor.execute(update_sql)
+                    min_date = self.TimeInverter(min_date)
+                    max_date = self.TimeInverter(max_date)
                 except :
-                    self.logger.error('Merging is failed. : {}'.format((cd, dt_values[idx], int(adjp))))
-                    raise ValueError("Exception is occured by merging adjprice error. Check the log.")
+                    raise ValueError("timeinverting failed")
+                tmp_df = stock.get_market_ohlcv_by_date(min_date, max_date, cd, adjusted=True)
+                adj_values = tmp_df['종가'].values
+                dt_values = tmp_df.index
+                dt_values = [self.TimeInverter(dt, hyphen=True) for dt in dt_values]
+                for idx, adjp in enumerate(adj_values):
+                    try :
+                        if cursor.execute(f"select * from daily_price where adjprice>0 and code='{cd}' and date='{dt_values[idx]}'") == 0 :
+                            update_sql = f"update daily_price set adjprice = {int(adjp)} where code = '{cd}' and date = '{dt_values[idx]}'"
+                            cursor.execute(update_sql)
+                        else :
+                            continue
+                    except :
+                        self.logger.error('Merging is failed. : {}'.format((cd, dt_values[idx], int(adjp))))
+                        errors.append((cd,dt_values[idx],int(adjp)))
+                        raise ValueError("Exception is occured by merging adjprice error. Check the log.")
+                self.conn.commit()
+            except :
+                errors.append(cd+'T-error')
+        """ Genuine None Values -> null to -999 value insertion. """
+        cursor.execute("SELECT DISTINCT CODE FROM daily_price WHERE adjprice IS NULL")
+        nulls = cursor.fetchall()
+        nulls = [x[0] for x in nulls]
+        for cd in nulls :
+            cursor.execute(f"update daily_price set adjprice=-999 where code='{cd}' and adjprice is null")
         self.conn.commit()
         self.logger.info("Merging Adjprice is well done.")
-        return "Merging Adjprice is well done."
+        return errors
 
     def Crawler(self):
         browser = Chrome(self.driver_path)
