@@ -8,10 +8,10 @@ trading automation using machine learning and quant-methodologies.
 * MPT에 따른다.
 
 ### Data
-* 모든 상장 기업들 목록 (by KRX 한국거래소)
+* 모든 상장 기업들 목록, 시가 총액, 수정종가 (by KRX 한국거래소)
 * 모든 상장 주식 가격 정보 (by Naver Finance)
 * 모든 상장 주식 재무 제표 (by Naver Finance)
-* 특정 주식 (연결)재무제표 (by DART)
+* 정기공시 (연결)재무제표, 손익계산서, 현금흐름표 (by DART-FSS)
 
 ### References
 * https://shinminyong.tistory.com/15
@@ -21,12 +21,16 @@ trading automation using machine learning and quant-methodologies.
 * https://github.com/josw123/dart-fss
 * https://github.com/FinanceData/OpenDartReader
 * https://blog.naver.com/PostView.nhn?blogId=freed0om&logNo=221971659619&parentCategoryNo=64&categoryNo=67&viewDate=&isShowPopularPosts=false&from=postList
+* https://nbviewer.jupyter.org/github/FinanceData/marcap/blob/master/marcap-tutorial.ipynb
 
 ### Environments
 * python 3.6.11
 * MariaDB 10.5
-* AWS Lightsail :
+* AWS Lightsail
 * CREON API
 * Slack
 * Dart-Fss, OpenDartReader
 * Selenium, BeautifulSoup
+* pyautogui
+* pykrx
+* marcap
