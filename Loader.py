@@ -84,7 +84,28 @@ class Loader:
             total = pd.concat([total, tmp_df],axis=1)
         return total
 
-
+        def BSLoader_v2(self, start, end, code_ls, item='EPS', unit='Y', colname='name'):
+            print("Note that the date you requested is for the non-PIT-ness data.")
+        if item not in self.items:
+            for itm in self.items:
+                if item in itm:
+                    item = itm
+        #cursor = self.conn.cursor()
+        total = pd.DataFrame()
+        for cd in code_ls :
+            tmp = pd.read_sql(f"select date, value from finance_info where code='{cd}' and item='{item}' and type='{unit}' and date between '{start}' and '{end}'",self.conn)
+            tmp.index = tmp.date.values
+            tmp.drop(['date'],axis=1,inplace=True)
+            if colname == 'name':
+                tmp.columns = [self.FindNameByCode(cd)]
+            elif colname == 'code':
+                tmp.columns = [str(cd)]
+            else :
+                raise ValueError("colname should be either 'name' or 'code'.")
+            total = pd.concat([total, tmp],axis=1)
+            
+        total.sort_index(inplace=True)
+        return total
 
 
 if __name__ == '__main__':
