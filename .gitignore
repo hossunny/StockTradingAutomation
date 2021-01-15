@@ -2,3 +2,4 @@
 *.log
 ./FullCache
 *.pickle
+./FullCache_bk
