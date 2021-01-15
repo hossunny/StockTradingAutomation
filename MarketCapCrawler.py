@@ -37,8 +37,22 @@ class MarketCapCrawler():
         with open("./TradingDates.pickle","rb") as fr:
             td_dates = pickle.load(fr)
         last_update_date = glob.glob("./FullCache/marcap/*.csv").split('marcap-')[-1].split('.csv')[0]
-        if len(last_update_date) <= 4:
-            raise ValueError("This date is not Y-M-D format.. Check this out. : ", last_update_date)
+        date_ls = []
+        if mode == 'daily':
+            if len(last_update_date) <= 4:
+                raise ValueError("This date is not Y-M-D format.. Check this out. : ", last_update_date)
+            daily_update_date=''
+            for idx, dt in enumerate(td_dates):
+                if idx != len(td_dates)-1:
+                    if dt == last_update_date :
+                        daily_update_date = td_dates[idx+1]
+            if daily_update_date == '':
+                raise ValueError("Not available.")
+            date_ls = [daily_update_date]
+        elif mode == 'full':
+            date_ls = td_dates
+        elif mode == 'manual':
+            raise ValueError("Not implemented mode.. do it yourself manually..")
         browser = Chrome(self.driver_path)
         browser.maximize_window()
         browser.get(self.url)
@@ -73,4 +87,5 @@ class MarketCapCrawler():
 if __name__ == '__main__':
     print("Starting MarketCap Crawler...")
     MCCrawl = MarketCapCrawler()
-    MCCrawl.GetMarcap()
+    errs = MCCrawl.GetMarcap(mode='daily')
+    print(errs)
