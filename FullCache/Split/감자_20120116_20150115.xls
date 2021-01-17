@@ -1,0 +1,1020 @@
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko">
+<head>
+<title>상세검색(EXCEL)</title>
+</head>
+<body>
+
+<table cellpadding="0" cellspacing="1" class="bbs_tb" border=1>
+	<col width="5%" />
+	<col width="5%" />
+	<col width="20%" />
+	<col width="10%" />
+	<col width="50%" />
+	<col width="10%" />
+	<tr>
+		<th bgcolor="#66FF99">번호</th>
+		<th bgcolor="#66FF99">시간</th>
+		<th bgcolor="#66FF99">회사명</th>
+		<th bgcolor="#66FF99">종목코드</th>
+		<th bgcolor="#66FF99">공시제목</th>
+		<th bgcolor="#66FF99">제출인</th>
+	</tr>
+	
+	
+	
+	
+		
+			
+	<tr>
+		<td style="text-align:center;">70</td>
+		<td style="mso-number-format:'@';text-align:center;">2015-01-07 18:40</td>
+ 
+	
+	
+		<td>STX</td>
+		<td style="mso-number-format:'@';text-align:center;">011810</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">69</td>
+		<td style="mso-number-format:'@';text-align:center;">2015-01-06 17:40</td>
+ 
+	
+	
+		<td>엠젠플러스</td>
+		<td style="mso-number-format:'@';text-align:center;">032790</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">68</td>
+		<td style="mso-number-format:'@';text-align:center;">2015-01-05 17:44</td>
+ 
+	
+	
+		<td>대성산업</td>
+		<td style="mso-number-format:'@';text-align:center;">128820</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">67</td>
+		<td style="mso-number-format:'@';text-align:center;">2015-01-02 17:07</td>
+ 
+	
+	
+		<td>제이웨이</td>
+		<td style="mso-number-format:'@';text-align:center;">058420</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">66</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-12-23 18:27</td>
+ 
+	
+	
+		<td>제이준코스메틱</td>
+		<td style="mso-number-format:'@';text-align:center;">025620</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">65</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-12-04 18:01</td>
+ 
+	
+	
+		<td>우리들제약</td>
+		<td style="mso-number-format:'@';text-align:center;">004720</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">64</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-10-15 18:03</td>
+ 
+	
+	
+		<td>티이씨코</td>
+		<td style="mso-number-format:'@';text-align:center;">008900</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">63</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-08-27 17:52</td>
+ 
+	
+	
+		<td>쎌마테라퓨틱스</td>
+		<td style="mso-number-format:'@';text-align:center;">015540</td>
+	
+
+		<td>상장안내(유상증자(제3자배정) 및 감자(주식병합)/상호변경)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">62</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-08-01 18:27</td>
+ 
+	
+	
+		<td>보해양조</td>
+		<td style="mso-number-format:'@';text-align:center;">000890</td>
+	
+
+		<td>변경상장(감자(자사주 무상소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">61</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-07-03 17:38</td>
+ 
+	
+	
+		<td>에버테크노</td>
+		<td style="mso-number-format:'@';text-align:center;">070480</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">60</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-07-01 17:08</td>
+ 
+	
+	
+		<td>플레이위드</td>
+		<td style="mso-number-format:'@';text-align:center;">023770</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">59</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-06-17 19:15</td>
+ 
+	
+	
+		<td>동양</td>
+		<td style="mso-number-format:'@';text-align:center;">001520</td>
+	
+
+		<td>변경상장(감자(주식소각 및 주식병합) 및 유상증자(제3자배정)))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">58</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-06-02 18:09</td>
+ 
+	
+	
+		<td>비케이탑스</td>
+		<td style="mso-number-format:'@';text-align:center;">030790</td>
+	
+
+		<td>상장안내(감자(주식병합) 및 유상증자(제3자배정))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">57</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-05-28 18:07</td>
+ 
+	
+	
+		<td>차바이오텍</td>
+		<td style="mso-number-format:'@';text-align:center;">085660</td>
+	
+
+		<td>변경상장(인적분할로인한 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">56</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-05-23 17:31</td>
+ 
+	
+	
+		<td>유니켐</td>
+		<td style="mso-number-format:'@';text-align:center;">011330</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">55</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-05-20 17:16</td>
+ 
+	
+	
+		<td>코오롱글로벌</td>
+		<td style="mso-number-format:'@';text-align:center;">003070</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">54</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-05-13 18:14</td>
+ 
+	
+	
+		<td>한일현대시멘트</td>
+		<td style="mso-number-format:'@';text-align:center;">006390</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">53</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-05-12 17:04</td>
+ 
+	
+	
+		<td>유진기업</td>
+		<td style="mso-number-format:'@';text-align:center;">023410</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">52</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-04-25 17:21</td>
+ 
+	
+	
+		<td>삼표시멘트</td>
+		<td style="mso-number-format:'@';text-align:center;">038500</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">51</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-04-14 17:28</td>
+ 
+	
+	
+		<td>현대페인트</td>
+		<td style="mso-number-format:'@';text-align:center;">011720</td>
+	
+
+		<td>상장안내(1차감자(주식병합) 및 유상증자(제3자배정)및 2차감자(주식병합) 후 유상증자(제3자배정))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">50</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-03-24 18:12</td>
+ 
+	
+	
+		<td>STX</td>
+		<td style="mso-number-format:'@';text-align:center;">011810</td>
+	
+
+		<td>상장안내(감자 및 유상증자)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">49</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-03-06 18:04</td>
+ 
+	
+	
+		<td>우리들휴브레인</td>
+		<td style="mso-number-format:'@';text-align:center;">118000</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">48</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-01-27 17:17</td>
+ 
+	
+	
+		<td>두산건설</td>
+		<td style="mso-number-format:'@';text-align:center;">011160</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">47</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-01-21 16:27</td>
+ 
+	
+	
+		<td>팬오션</td>
+		<td style="mso-number-format:'@';text-align:center;">028670</td>
+	
+
+		<td>상장안내(1차감자(주식병합) 및 유상증자(제3자배정) 후 2차감자(주식병합) / 상호변경)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">46</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-01-20 17:54</td>
+ 
+	
+	
+		<td>범양건영</td>
+		<td style="mso-number-format:'@';text-align:center;">002410</td>
+	
+
+		<td>상장안내(유상증자(제3자배정)후 1차감자(주식병합) 및 2차감자(회사분할))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">45</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-01-16 15:58</td>
+ 
+	
+	
+		<td>보루네오가구</td>
+		<td style="mso-number-format:'@';text-align:center;">004740</td>
+	
+
+		<td>상장안내(추가상장(제3자배정 유상증자) 및 변경상장(감자))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">44</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-01-15 17:39</td>
+ 
+	
+	
+		<td>상상인증권</td>
+		<td style="mso-number-format:'@';text-align:center;">001290</td>
+	
+
+		<td>변경상장(감자(유상소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">43</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-01-08 17:50</td>
+ 
+	
+	
+		<td>폴루스바이오팜</td>
+		<td style="mso-number-format:'@';text-align:center;">007630</td>
+	
+
+		<td>상장안내(감자 및 액면분할)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">42</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-01-07 17:27</td>
+ 
+	
+	
+		<td>대림건설</td>
+		<td style="mso-number-format:'@';text-align:center;">001880</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">41</td>
+		<td style="mso-number-format:'@';text-align:center;">2014-01-02 17:40</td>
+ 
+	
+	
+		<td>컨버즈</td>
+		<td style="mso-number-format:'@';text-align:center;">109070</td>
+	
+
+		<td>상장안내(감자 및 액면분할)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">40</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-12-23 15:15</td>
+ 
+	
+	
+		<td>제이준코스메틱</td>
+		<td style="mso-number-format:'@';text-align:center;">025620</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">39</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-11-21 18:23</td>
+ 
+	
+	
+		<td>엘컴텍</td>
+		<td style="mso-number-format:'@';text-align:center;">037950</td>
+	
+
+		<td>변경상장(2차감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">38</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-11-21 18:23</td>
+ 
+	
+	
+		<td>엘컴텍</td>
+		<td style="mso-number-format:'@';text-align:center;">037950</td>
+	
+
+		<td>변경상장(1차감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">37</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-11-19 17:24</td>
+ 
+	
+	
+		<td>STX조선해양</td>
+		<td style="mso-number-format:'@';text-align:center;">067250</td>
+	
+
+		<td>변경상장(감자(주식병합 및 주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">36</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-11-01 15:29</td>
+ 
+	
+	
+		<td>동화기업</td>
+		<td style="mso-number-format:'@';text-align:center;">025900</td>
+	
+
+		<td>변경상장(인적분할로인한 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">35</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-10-29 17:42</td>
+ 
+	
+	
+		<td>케이피엠테크</td>
+		<td style="mso-number-format:'@';text-align:center;">042040</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">34</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-08-19 17:17</td>
+ 
+	
+	
+		<td>에스와이코퍼레이션</td>
+		<td style="mso-number-format:'@';text-align:center;">008080</td>
+	
+
+		<td>상장안내(상호변경/감자(주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">33</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-07-29 18:03</td>
+ 
+	
+	
+		<td>KEC</td>
+		<td style="mso-number-format:'@';text-align:center;">092220</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">32</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-05-21 18:26</td>
+ 
+	
+	
+		<td>한솔아트원제지</td>
+		<td style="mso-number-format:'@';text-align:center;">007190</td>
+	
+
+		<td>상장안내(상호변경 / 보통주 및 우선주 감자 후 액면분할)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">31</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-05-21 18:21</td>
+ 
+	
+	
+		<td>신일건업</td>
+		<td style="mso-number-format:'@';text-align:center;">014350</td>
+	
+
+		<td>상장안내(1차감자(주식병합) 및 유상증자(제3자배정) 후 2차감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">30</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-05-08 16:48</td>
+ 
+	
+	
+		<td>대한해운</td>
+		<td style="mso-number-format:'@';text-align:center;">005880</td>
+	
+
+		<td>상장안내(감자에 따른 변경상장 및 보통주 추가상장)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">29</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-04-30 17:24</td>
+ 
+	
+	
+		<td>우리종금</td>
+		<td style="mso-number-format:'@';text-align:center;">010050</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">28</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-04-29 16:44</td>
+ 
+	
+	
+		<td>에이프로젠 KIC</td>
+		<td style="mso-number-format:'@';text-align:center;">007460</td>
+	
+
+		<td>상장안내(감자(주식병합) 및 상호변경)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">27</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-04-25 17:50</td>
+ 
+	
+	
+		<td>웅진</td>
+		<td style="mso-number-format:'@';text-align:center;">016880</td>
+	
+
+		<td>상장안내(1차감자(주식병합) 및 유상증자(제3자배정) 및 2차감자(주식병합) 후 3차감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">26</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-04-05 17:05</td>
+ 
+	
+	
+		<td>진흥기업</td>
+		<td style="mso-number-format:'@';text-align:center;">002780</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">25</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-03-27 17:58</td>
+ 
+	
+	
+		<td>금호산업</td>
+		<td style="mso-number-format:'@';text-align:center;">002990</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">24</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-02-14 16:03</td>
+ 
+	
+	
+		<td>남광토건</td>
+		<td style="mso-number-format:'@';text-align:center;">001260</td>
+	
+
+		<td>상장안내(1차감자(주식병합) 및 유상증자(제3자배정) 후 2차감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">23</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-01-22 17:23</td>
+ 
+	
+	
+		<td>삼환기업</td>
+		<td style="mso-number-format:'@';text-align:center;">000360</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">22</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-01-09 18:07</td>
+ 
+	
+	
+		<td>벽산건설</td>
+		<td style="mso-number-format:'@';text-align:center;">002530</td>
+	
+
+		<td>상장안내(1차감자(주식병합) 및 유상증자(제3자배정)후 2차감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">21</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-01-07 16:51</td>
+ 
+	
+	
+		<td>이엔플러스</td>
+		<td style="mso-number-format:'@';text-align:center;">074610</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">20</td>
+		<td style="mso-number-format:'@';text-align:center;">2013-01-02 17:30</td>
+ 
+	
+	
+		<td>대양금속</td>
+		<td style="mso-number-format:'@';text-align:center;">009190</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">19</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-12-04 16:19</td>
+ 
+	
+	
+		<td>범양건영</td>
+		<td style="mso-number-format:'@';text-align:center;">002410</td>
+	
+
+		<td>상장안내(1차감자(주식병합) 및 유상증자(제3자배정)후 2차감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">18</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-11-05 17:35</td>
+ 
+	
+	
+		<td>대한전선</td>
+		<td style="mso-number-format:'@';text-align:center;">001440</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">17</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-10-18 16:23</td>
+ 
+	
+	
+		<td>컨버즈</td>
+		<td style="mso-number-format:'@';text-align:center;">109070</td>
+	
+
+		<td>변경상장(감자)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">16</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-08-09 16:51</td>
+ 
+	
+	
+		<td>보루네오가구</td>
+		<td style="mso-number-format:'@';text-align:center;">004740</td>
+	
+
+		<td>상장안내(액면분할 및 감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">15</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-07-10 17:47</td>
+ 
+	
+	
+		<td>엔스퍼트</td>
+		<td style="mso-number-format:'@';text-align:center;">098400</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">14</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-07-04 17:49</td>
+ 
+	
+	
+		<td>티이씨코</td>
+		<td style="mso-number-format:'@';text-align:center;">008900</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">13</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-05-29 17:44</td>
+ 
+	
+	
+		<td>허메스홀딩스</td>
+		<td style="mso-number-format:'@';text-align:center;">012400</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">12</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-05-17 16:56</td>
+ 
+	
+	
+		<td>벽산건설</td>
+		<td style="mso-number-format:'@';text-align:center;">002530</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">11</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-05-10 19:19</td>
+ 
+	
+	
+		<td>두산</td>
+		<td style="mso-number-format:'@';text-align:center;">000150</td>
+	
+
+		<td>변경상장(감자(주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">10</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-05-09 18:15</td>
+ 
+	
+	
+		<td>대우송도개발</td>
+		<td style="mso-number-format:'@';text-align:center;">004550</td>
+	
+
+		<td>상장안내(상호변경, 1차감자(회사분할), 2차감자(주식병합) 및 제3자배정 유상증자)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">9</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-04-20 17:53</td>
+ 
+	
+	
+		<td>인바이오젠</td>
+		<td style="mso-number-format:'@';text-align:center;">101140</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">8</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-04-18 16:45</td>
+ 
+	
+	
+		<td>아인스M&M</td>
+		<td style="mso-number-format:'@';text-align:center;">040740</td>
+	
+
+		<td>변경상장(감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">7</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-04-12 18:04</td>
+ 
+	
+	
+		<td>동양건설</td>
+		<td style="mso-number-format:'@';text-align:center;">005900</td>
+	
+
+		<td>상장안내(1차감자(주식병합) 및 유상증자(제3자배정)후 2차감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">6</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-03-22 21:10</td>
+ 
+	
+	
+		<td>미주제강</td>
+		<td style="mso-number-format:'@';text-align:center;">002670</td>
+	
+
+		<td><font color='#FF8040'>[정정]</font>변경상장(감자)<font color='#49531'>[정]</font></td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">5</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-03-20 17:04</td>
+ 
+	
+	
+		<td>미주제강</td>
+		<td style="mso-number-format:'@';text-align:center;">002670</td>
+	
+
+		<td>변경상장(감자)<font color='#49531'>[정]</font></td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">4</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-03-13 18:32</td>
+ 
+	
+	
+		<td>진흥기업</td>
+		<td style="mso-number-format:'@';text-align:center;">002780</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">3</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-03-13 18:32</td>
+ 
+	
+	
+		<td>남광토건</td>
+		<td style="mso-number-format:'@';text-align:center;">001260</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">2</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-01-27 17:02</td>
+ 
+	
+	
+		<td>유니켐</td>
+		<td style="mso-number-format:'@';text-align:center;">011330</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">1</td>
+		<td style="mso-number-format:'@';text-align:center;">2012-01-17 17:25</td>
+ 
+	
+	
+		<td>삼성제약</td>
+		<td style="mso-number-format:'@';text-align:center;">001360</td>
+	
+
+		<td>상장안내(무상감자(액면가액 감액))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+		
+		
+	
+</table>
+
+</body>
+</html>

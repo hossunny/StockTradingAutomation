@@ -1,0 +1,1524 @@
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko">
+<head>
+<title>상세검색(EXCEL)</title>
+</head>
+<body>
+
+<table cellpadding="0" cellspacing="1" class="bbs_tb" border=1>
+	<col width="5%" />
+	<col width="5%" />
+	<col width="20%" />
+	<col width="10%" />
+	<col width="50%" />
+	<col width="10%" />
+	<tr>
+		<th bgcolor="#66FF99">번호</th>
+		<th bgcolor="#66FF99">시간</th>
+		<th bgcolor="#66FF99">회사명</th>
+		<th bgcolor="#66FF99">종목코드</th>
+		<th bgcolor="#66FF99">공시제목</th>
+		<th bgcolor="#66FF99">제출인</th>
+	</tr>
+	
+	
+	
+	
+		
+			
+	<tr>
+		<td style="text-align:center;">106</td>
+		<td style="mso-number-format:'@';text-align:center;">2021-01-15 18:19</td>
+ 
+	
+	
+		<td>더블유에프엠</td>
+		<td style="mso-number-format:'@';text-align:center;">035290</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">105</td>
+		<td style="mso-number-format:'@';text-align:center;">2021-01-12 17:27</td>
+ 
+	
+	
+		<td>아시아나항공</td>
+		<td style="mso-number-format:'@';text-align:center;">020560</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">104</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-12-22 16:25</td>
+ 
+	
+	
+		<td>제낙스</td>
+		<td style="mso-number-format:'@';text-align:center;">065620</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">103</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-12-22 16:18</td>
+ 
+	
+	
+		<td>세동</td>
+		<td style="mso-number-format:'@';text-align:center;">053060</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">102</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-12-03 17:06</td>
+ 
+	
+	
+		<td>SGC이테크건설</td>
+		<td style="mso-number-format:'@';text-align:center;">016250</td>
+	
+
+		<td>변경상장(인적분할로인한 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">101</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-12-01 17:39</td>
+ 
+	
+	
+		<td>쌍용양회공업</td>
+		<td style="mso-number-format:'@';text-align:center;">003410</td>
+	
+
+		<td>상장안내(감자(액면변경))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">100</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-11-30 15:54</td>
+ 
+	
+	
+		<td>라이트론</td>
+		<td style="mso-number-format:'@';text-align:center;">069540</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">99</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-11-19 17:28</td>
+ 
+	
+	
+		<td>엔케이물산</td>
+		<td style="mso-number-format:'@';text-align:center;">009810</td>
+	
+
+		<td>상장안내(감자(주식병합)/액면분할)</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">98</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-11-17 16:22</td>
+ 
+	
+	
+		<td>하이소닉</td>
+		<td style="mso-number-format:'@';text-align:center;">106080</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">97</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-11-13 17:53</td>
+ 
+	
+	
+		<td>레드로버</td>
+		<td style="mso-number-format:'@';text-align:center;">060300</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">96</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-11-11 17:16</td>
+ 
+	
+	
+		<td>비츠로시스</td>
+		<td style="mso-number-format:'@';text-align:center;">054220</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">95</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-11-02 17:35</td>
+ 
+	
+	
+		<td>키위미디어그룹</td>
+		<td style="mso-number-format:'@';text-align:center;">012170</td>
+	
+
+		<td>상장안내(감자(주식병합)/유상증자(제3자배정))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">94</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-11-02 17:20</td>
+ 
+	
+	
+		<td>옐로페이</td>
+		<td style="mso-number-format:'@';text-align:center;">179720</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코넥스시장</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">93</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-10-28 18:11</td>
+ 
+	
+	
+		<td>센트럴인사이트</td>
+		<td style="mso-number-format:'@';text-align:center;">012600</td>
+	
+
+		<td>상장안내(보통주 추가상장(국내CB전환) 및 변경상장(액면분할/감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">92</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-10-22 16:44</td>
+ 
+	
+	
+		<td>포스링크</td>
+		<td style="mso-number-format:'@';text-align:center;">056730</td>
+	
+
+		<td>변경상장(2차 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">91</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-10-22 16:25</td>
+ 
+	
+	
+		<td>포스링크</td>
+		<td style="mso-number-format:'@';text-align:center;">056730</td>
+	
+
+		<td>변경상장(1차 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">90</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-10-20 17:58</td>
+ 
+	
+	
+		<td>글로스퍼랩스</td>
+		<td style="mso-number-format:'@';text-align:center;">032860</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">89</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-10-19 17:49</td>
+ 
+	
+	
+		<td>에이엔피</td>
+		<td style="mso-number-format:'@';text-align:center;">015260</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">88</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-10-07 17:16</td>
+ 
+	
+	
+		<td>키위미디어그룹</td>
+		<td style="mso-number-format:'@';text-align:center;">012170</td>
+	
+
+		<td>변경상장(감자(주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">87</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-09-29 16:33</td>
+ 
+	
+	
+		<td>KD</td>
+		<td style="mso-number-format:'@';text-align:center;">044180</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">86</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-09-24 18:12</td>
+ 
+	
+	
+		<td>키위미디어그룹</td>
+		<td style="mso-number-format:'@';text-align:center;">012170</td>
+	
+
+		<td>상장안내(감자(주식병합)/유상증자(제3자배정))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">85</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-09-23 16:53</td>
+ 
+	
+	
+		<td>코센</td>
+		<td style="mso-number-format:'@';text-align:center;">009730</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">84</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-09-03 16:24</td>
+ 
+	
+	
+		<td>이노진</td>
+		<td style="mso-number-format:'@';text-align:center;">344860</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코넥스시장</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">83</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-08-28 18:07</td>
+ 
+	
+	
+		<td>한류타임즈</td>
+		<td style="mso-number-format:'@';text-align:center;">039670</td>
+	
+
+		<td>변경상장(감자(2차))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">82</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-08-28 17:41</td>
+ 
+	
+	
+		<td>한류타임즈</td>
+		<td style="mso-number-format:'@';text-align:center;">039670</td>
+	
+
+		<td>변경상장(감자(1차))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">81</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-08-14 18:19</td>
+ 
+	
+	
+		<td>감마누</td>
+		<td style="mso-number-format:'@';text-align:center;">192410</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">80</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-08-03 17:01</td>
+ 
+	
+	
+		<td>솔브레인홀딩스</td>
+		<td style="mso-number-format:'@';text-align:center;">036830</td>
+	
+
+		<td>변경상장(인적분할로인한 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">79</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-07-16 16:06</td>
+ 
+	
+	
+		<td>경남제약헬스케어</td>
+		<td style="mso-number-format:'@';text-align:center;">223310</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">78</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-07-14 19:04</td>
+ 
+	
+	
+		<td>비츠로시스</td>
+		<td style="mso-number-format:'@';text-align:center;">054220</td>
+	
+
+		<td>변경상장(감자(2차))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">77</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-07-14 19:04</td>
+ 
+	
+	
+		<td>비츠로시스</td>
+		<td style="mso-number-format:'@';text-align:center;">054220</td>
+	
+
+		<td>변경상장(감자(1차))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">76</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-06-30 16:45</td>
+ 
+	
+	
+		<td>크루셜텍</td>
+		<td style="mso-number-format:'@';text-align:center;">114120</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">75</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-06-29 17:36</td>
+ 
+	
+	
+		<td>미래산업</td>
+		<td style="mso-number-format:'@';text-align:center;">025560</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">74</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-06-24 16:49</td>
+ 
+	
+	
+		<td>씨씨에스</td>
+		<td style="mso-number-format:'@';text-align:center;">066790</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">73</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-06-19 18:07</td>
+ 
+	
+	
+		<td>화진</td>
+		<td style="mso-number-format:'@';text-align:center;">134780</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">72</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-06-02 17:41</td>
+ 
+	
+	
+		<td>이지홀딩스</td>
+		<td style="mso-number-format:'@';text-align:center;">035810</td>
+	
+
+		<td>변경상장(인적분할로인한 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">71</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-05-28 16:09</td>
+ 
+	
+	
+		<td>에이루트</td>
+		<td style="mso-number-format:'@';text-align:center;">096690</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">70</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-05-19 16:04</td>
+ 
+	
+	
+		<td>한솔홀딩스</td>
+		<td style="mso-number-format:'@';text-align:center;">004150</td>
+	
+
+		<td>변경상장(감자(주식소각, 액면가액 감액))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">69</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-05-14 16:29</td>
+ 
+	
+	
+		<td>솔고바이오</td>
+		<td style="mso-number-format:'@';text-align:center;">043100</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">68</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-05-14 13:47</td>
+ 
+	
+	
+		<td>하림지주</td>
+		<td style="mso-number-format:'@';text-align:center;">003380</td>
+	
+
+		<td><font color='#FF8040'>[정정]</font>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">67</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-05-13 17:37</td>
+ 
+	
+	
+		<td>하림지주</td>
+		<td style="mso-number-format:'@';text-align:center;">003380</td>
+	
+
+		<td>변경상장(유상감자)<font color='#49531'>[정]</font></td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">66</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-05-13 17:35</td>
+ 
+	
+	
+		<td>웅진씽크빅</td>
+		<td style="mso-number-format:'@';text-align:center;">095720</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">65</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-05-12 16:27</td>
+ 
+	
+	
+		<td>동성코퍼레이션</td>
+		<td style="mso-number-format:'@';text-align:center;">102260</td>
+	
+
+		<td>변경상장(감자(주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">64</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-05-08 17:13</td>
+ 
+	
+	
+		<td>삼성물산</td>
+		<td style="mso-number-format:'@';text-align:center;">028260</td>
+	
+
+		<td>변경상장(감자(주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">63</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-04-13 16:34</td>
+ 
+	
+	
+		<td>지스마트글로벌</td>
+		<td style="mso-number-format:'@';text-align:center;">114570</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">62</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-03-23 16:17</td>
+ 
+	
+	
+		<td>페이퍼코리아</td>
+		<td style="mso-number-format:'@';text-align:center;">001020</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">61</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-03-17 17:53</td>
+ 
+	
+	
+		<td>씨아이테크</td>
+		<td style="mso-number-format:'@';text-align:center;">004920</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">60</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-03-12 18:06</td>
+ 
+	
+	
+		<td>지와이커머스</td>
+		<td style="mso-number-format:'@';text-align:center;">111820</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">59</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-03-09 18:35</td>
+ 
+	
+	
+		<td>휴벡셀</td>
+		<td style="mso-number-format:'@';text-align:center;">212310</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코넥스시장</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">58</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-03-06 16:43</td>
+ 
+	
+	
+		<td>이엠앤아이</td>
+		<td style="mso-number-format:'@';text-align:center;">083470</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">57</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-03-04 15:26</td>
+ 
+	
+	
+		<td>컨버즈</td>
+		<td style="mso-number-format:'@';text-align:center;">109070</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">56</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-02-26 17:03</td>
+ 
+	
+	
+		<td>비케이탑스</td>
+		<td style="mso-number-format:'@';text-align:center;">030790</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">55</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-02-18 16:40</td>
+ 
+	
+	
+		<td>오리엔트바이오</td>
+		<td style="mso-number-format:'@';text-align:center;">002630</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">54</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-02-14 18:49</td>
+ 
+	
+	
+		<td>KR모터스</td>
+		<td style="mso-number-format:'@';text-align:center;">000040</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">53</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-01-16 17:40</td>
+ 
+	
+	
+		<td>아이톡시</td>
+		<td style="mso-number-format:'@';text-align:center;">052770</td>
+	
+
+		<td>변경상장(2차 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">52</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-01-16 17:37</td>
+ 
+	
+	
+		<td>아이톡시</td>
+		<td style="mso-number-format:'@';text-align:center;">052770</td>
+	
+
+		<td>변경상장(1차 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">51</td>
+		<td style="mso-number-format:'@';text-align:center;">2020-01-10 17:59</td>
+ 
+	
+	
+		<td>바른전자</td>
+		<td style="mso-number-format:'@';text-align:center;">064520</td>
+	
+
+		<td>변경상장(1차 및 2차 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">50</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-12-23 16:36</td>
+ 
+	
+	
+		<td>릭스솔루션</td>
+		<td style="mso-number-format:'@';text-align:center;">029480</td>
+	
+
+		<td><font color='#FF8040'>[정정]</font>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">49</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-12-23 16:11</td>
+ 
+	
+	
+		<td>릭스솔루션</td>
+		<td style="mso-number-format:'@';text-align:center;">029480</td>
+	
+
+		<td>변경상장(무상감자)<font color='#49531'>[정]</font></td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">48</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-12-20 17:21</td>
+ 
+	
+	
+		<td>휴젤</td>
+		<td style="mso-number-format:'@';text-align:center;">145020</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">47</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-12-19 18:17</td>
+ 
+	
+	
+		<td>퓨전</td>
+		<td style="mso-number-format:'@';text-align:center;">195440</td>
+	
+
+		<td>변경상장(감자(무상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">46</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-12-18 17:40</td>
+ 
+	
+	
+		<td>더블유에프엠</td>
+		<td style="mso-number-format:'@';text-align:center;">035290</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">45</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-11-22 18:18</td>
+ 
+	
+	
+		<td>하이소닉</td>
+		<td style="mso-number-format:'@';text-align:center;">106080</td>
+	
+
+		<td>변경상장(2차 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">44</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-11-22 18:15</td>
+ 
+	
+	
+		<td>하이소닉</td>
+		<td style="mso-number-format:'@';text-align:center;">106080</td>
+	
+
+		<td>변경상장(1차 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">43</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-10-21 17:12</td>
+ 
+	
+	
+		<td>금호전기</td>
+		<td style="mso-number-format:'@';text-align:center;">001210</td>
+	
+
+		<td>상장안내(액면분할/감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">42</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-10-17 17:03</td>
+ 
+	
+	
+		<td>제이테크놀로지</td>
+		<td style="mso-number-format:'@';text-align:center;">035480</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">41</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-10-10 16:31</td>
+ 
+	
+	
+		<td>바른전자</td>
+		<td style="mso-number-format:'@';text-align:center;">064520</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">40</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-10-07 16:16</td>
+ 
+	
+	
+		<td>뉴인텍</td>
+		<td style="mso-number-format:'@';text-align:center;">012340</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">39</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-09-06 17:26</td>
+ 
+	
+	
+		<td>고려개발</td>
+		<td style="mso-number-format:'@';text-align:center;">004200</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">38</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-09-06 16:20</td>
+ 
+	
+	
+		<td>진로발효</td>
+		<td style="mso-number-format:'@';text-align:center;">018120</td>
+	
+
+		<td>변경상장(감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">37</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-08-13 16:42</td>
+ 
+	
+	
+		<td>코스나인</td>
+		<td style="mso-number-format:'@';text-align:center;">082660</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">36</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-08-13 16:27</td>
+ 
+	
+	
+		<td>아이피몬스터</td>
+		<td style="mso-number-format:'@';text-align:center;">223220</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코넥스시장</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">35</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-08-08 17:05</td>
+ 
+	
+	
+		<td>미원상사</td>
+		<td style="mso-number-format:'@';text-align:center;">002840</td>
+	
+
+		<td>변경상장(감자(액면변경))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">34</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-08-08 17:04</td>
+ 
+	
+	
+		<td>동남합성</td>
+		<td style="mso-number-format:'@';text-align:center;">023450</td>
+	
+
+		<td>변경상장(감자(액면변경))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">33</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-07-26 17:27</td>
+ 
+	
+	
+		<td>피씨디렉트</td>
+		<td style="mso-number-format:'@';text-align:center;">051380</td>
+	
+
+		<td>변경상장(감자(유상))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">32</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-07-10 15:49</td>
+ 
+	
+	
+		<td>바른전자</td>
+		<td style="mso-number-format:'@';text-align:center;">064520</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">31</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-07-04 15:07</td>
+ 
+	
+	
+		<td>데코앤이</td>
+		<td style="mso-number-format:'@';text-align:center;">017680</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">30</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-06-24 16:15</td>
+ 
+	
+	
+		<td>깨끗한나라</td>
+		<td style="mso-number-format:'@';text-align:center;">004540</td>
+	
+
+		<td>상장안내(감자(액면변경))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">29</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-06-19 16:20</td>
+ 
+	
+	
+		<td>흥아해운</td>
+		<td style="mso-number-format:'@';text-align:center;">003280</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">28</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-06-10 15:58</td>
+ 
+	
+	
+		<td>한국전자금융</td>
+		<td style="mso-number-format:'@';text-align:center;">063570</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">27</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-05-16 17:01</td>
+ 
+	
+	
+		<td>한진중공업</td>
+		<td style="mso-number-format:'@';text-align:center;">097230</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">26</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-05-14 17:15</td>
+ 
+	
+	
+		<td>미래아이앤지</td>
+		<td style="mso-number-format:'@';text-align:center;">007120</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">25</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-05-08 18:47</td>
+ 
+	
+	
+		<td>에프앤가이드</td>
+		<td style="mso-number-format:'@';text-align:center;">064850</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코넥스시장</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">24</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-05-07 16:54</td>
+ 
+	
+	
+		<td>피에스케이홀딩스</td>
+		<td style="mso-number-format:'@';text-align:center;">031980</td>
+	
+
+		<td>변경상장(인적분할로인한 감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">23</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-04-29 16:43</td>
+ 
+	
+	
+		<td>한일홀딩스</td>
+		<td style="mso-number-format:'@';text-align:center;">003300</td>
+	
+
+		<td>변경상장(감자(주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">22</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-01-31 17:50</td>
+ 
+	
+	
+		<td>상상인인더스트리</td>
+		<td style="mso-number-format:'@';text-align:center;">101000</td>
+	
+
+		<td>변경상장(2차감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">21</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-01-31 17:50</td>
+ 
+	
+	
+		<td>상상인인더스트리</td>
+		<td style="mso-number-format:'@';text-align:center;">101000</td>
+	
+
+		<td>변경상장(1차감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">20</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-01-09 17:09</td>
+ 
+	
+	
+		<td>롯데지주</td>
+		<td style="mso-number-format:'@';text-align:center;">004990</td>
+	
+
+		<td>변경상장(감자(주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">19</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-01-08 17:53</td>
+ 
+	
+	
+		<td>골프존데카</td>
+		<td style="mso-number-format:'@';text-align:center;">183410</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코넥스시장</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">18</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-01-08 15:32</td>
+ 
+	
+	
+		<td>에스마크</td>
+		<td style="mso-number-format:'@';text-align:center;">030270</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">17</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-01-07 16:49</td>
+ 
+	
+	
+		<td>버킷스튜디오</td>
+		<td style="mso-number-format:'@';text-align:center;">066410</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">16</td>
+		<td style="mso-number-format:'@';text-align:center;">2019-01-03 15:58</td>
+ 
+	
+	
+		<td>엠벤처투자</td>
+		<td style="mso-number-format:'@';text-align:center;">019590</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">15</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-12-21 16:17</td>
+ 
+	
+	
+		<td>STX중공업</td>
+		<td style="mso-number-format:'@';text-align:center;">071970</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">14</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-12-20 18:44</td>
+ 
+	
+	
+		<td>케이에스피</td>
+		<td style="mso-number-format:'@';text-align:center;">073010</td>
+	
+
+		<td>변경상장(2차감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">13</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-12-20 18:38</td>
+ 
+	
+	
+		<td>케이에스피</td>
+		<td style="mso-number-format:'@';text-align:center;">073010</td>
+	
+
+		<td>변경상장(1차감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">12</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-11-01 17:08</td>
+ 
+	
+	
+		<td>나노스</td>
+		<td style="mso-number-format:'@';text-align:center;">151910</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">11</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-09-20 20:02</td>
+ 
+	
+	
+		<td>C&S자산관리</td>
+		<td style="mso-number-format:'@';text-align:center;">032040</td>
+	
+
+		<td>변경상장(무상감자(2차))</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">10</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-09-20 19:50</td>
+ 
+	
+	
+		<td>C&S자산관리</td>
+		<td style="mso-number-format:'@';text-align:center;">032040</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">9</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-09-20 16:25</td>
+ 
+	
+	
+		<td>에스제이케이</td>
+		<td style="mso-number-format:'@';text-align:center;">080440</td>
+	
+
+		<td>변경상장(감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">8</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-07-20 15:52</td>
+ 
+	
+	
+		<td>코디</td>
+		<td style="mso-number-format:'@';text-align:center;">080530</td>
+	
+
+		<td>변경상장(감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">7</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-07-16 16:27</td>
+ 
+	
+	
+		<td>위너지스</td>
+		<td style="mso-number-format:'@';text-align:center;">026260</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">6</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-05-10 16:15</td>
+ 
+	
+	
+		<td>한화솔루션</td>
+		<td style="mso-number-format:'@';text-align:center;">009830</td>
+	
+
+		<td>변경상장(감자(주식소각))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">5</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-05-02 18:44</td>
+ 
+	
+	
+		<td>스카이이앤엠</td>
+		<td style="mso-number-format:'@';text-align:center;">131100</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">4</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-04-17 18:00</td>
+ 
+	
+	
+		<td>KG동부제철</td>
+		<td style="mso-number-format:'@';text-align:center;">016380</td>
+	
+
+		<td>상장안내(변경상장(감자(주식병합)) 및 추가상장(유상증자(제3자배정)))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">3</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-04-17 17:12</td>
+ 
+	
+	
+		<td>행남사</td>
+		<td style="mso-number-format:'@';text-align:center;">008800</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">2</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-02-22 18:51</td>
+ 
+	
+	
+		<td>오성첨단소재</td>
+		<td style="mso-number-format:'@';text-align:center;">052420</td>
+	
+
+		<td>변경상장(무상감자)</td>
+		<td>코스닥시장본부</td>
+	</tr>
+			
+	<tr>
+		<td style="text-align:center;">1</td>
+		<td style="mso-number-format:'@';text-align:center;">2018-02-13 17:27</td>
+ 
+	
+	
+		<td>상상인증권</td>
+		<td style="mso-number-format:'@';text-align:center;">001290</td>
+	
+
+		<td>변경상장(감자(주식병합))</td>
+		<td>유가증권시장본부</td>
+	</tr>
+			
+		
+		
+	
+</table>
+
+</body>
+</html>
