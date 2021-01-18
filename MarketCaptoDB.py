@@ -23,7 +23,39 @@ warnings.filterwarnings(action='ignore')
 import shutil
 import pyautogui
 
+def IndexCalculator(self):
+    
 
+    tmp_marcap = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='시가총액'"
+    tmp_asset = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='자산총계'"
+    tmp_netincome = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='당기순이익'"
+    tmp_equity = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='자본총계'"
+    tmp_asset = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='자산총계'"
+    tmp_stocks = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='상장주식수'"
+    tmp_ocf = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='영업활동현금흐름'"
+    tmp_profit = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='영업이익'"
+    tmp_sales = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='매출액'"
+
+    PBR = tmp_marcap / tmp_equity
+    PER = tmp_marcap / tmp_netincome
+    PCR = tmp_marcap / tmp_ocf
+    POR = tmp_marcap / tmp_profit
+    PSR = tmp_marcap / tmp_sales
+    ROE = tmp_netincome / tmp_equity
+    ROA = tmp_netincome / tmp_asset
+    EPS = tmp_netincome / tmp_stocks
+    # tmp_marcap itself
+
+    sql = f"insert into test values('{cd}','{dt}','PBR','{tp}',PBR)"
+    sql = f"insert into test values('{cd}','{dt}','PER','{tp}',PER)"
+    sql = f"insert into test values('{cd}','{dt}','PCR','{tp}',PCR)"
+    sql = f"insert into test values('{cd}','{dt}','POR','{tp}',POR)"
+    sql = f"insert into test values('{cd}','{dt}','PSR','{tp}',PSR)"
+    sql = f"insert into test values('{cd}','{dt}','ROE','{tp}',ROE)"
+    sql = f"insert into test values('{cd}','{dt}','ROA','{tp}',ROA)"
+    sql = f"insert into test values('{cd}','{dt}','EPS','{tp}',EPS)"
+    
+    return True
 
 
 def MarcapExtract(codes, td_days, conn):
