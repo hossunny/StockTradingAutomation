@@ -107,78 +107,36 @@ class Loader:
         total.sort_index(inplace=True)
         return total
 
-    def BSLoader_v3(self, start, end, code_ls, item='EPS', unit='Y', colname='name'):
+    def GetFinance(self, start, end, code_ls, item='EPS', unit='Y', colname='name'):
         print("Note that the date you requested is for the non-PIT-ness data.")
-        Q1 = ''#year+'-'+'03-31'
-        Q2 = ''#year+'-'+'06-31'
-        Q3 = ''#year+'-'+'09-31'
-        Y = ''#year+'-'+'12-31'
-        for td in self.td_days :
-            if td >= year+'-'+'01-01':
-                if td <= year+'-03-31':
-                    Q1 = td
-                elif td <= year+'-06-31':
-                    Q2 = td
-                elif td <= year+'-09-31':
-                    Q3 = td
-                elif td <= year+'-12-31':
-                    Y = td
-                else :
-                    break
         total = pd.DataFrame()
-        if item in ['시가총액','상장주식수','시가총액비중(%)']:
-            if item == '시가총액':
-                item = 'Marcap'
-            elif item == '시가총액비중(%)':
-                item == 'MarcapRatio'
-            elif item == '상장주식수':
-                item == 'Stocks'
+        if item not in self.items:
+            for itm in self.items:
+                if item in itm:
+                    item = itm
+                else :
+                    raise ValueError("Item you requested does not exist..")
+        #cursor = self.conn.cursor()
+
+        for cd in code_ls :
+            tmp = pd.read_sql(f"select date, value from finance_info_copy where code='{cd}' and itm='{item}' and type='{unit}' and date between '{start}' and '{end}'",self.conn)
+            tmp.index = tmp.date.values
+            tmp.drop(['date'],axis=1,inplace=True)
+            if item in ['EPS','BPS']:
+                tmp['value'] = tmp['value'].map(lambda x : x * 100000000)
+            elif item in ['PBR','PER','PCR','POR','PSR']:
+                tmp['value'] = tmp['value'].map(lambda x : x / 100000000)
+            else : #ROE, ROA don't need unit scaler
+                pass
+            if colname == 'name':
+                tmp.columns = [self.FindNameByCode(cd)]
+            elif colname == 'code':
+                tmp.columns = [str(cd)]
             else :
-                raise ValueError("Wrong Item!!!")
-            file_path = "./FullCache/marcap/marcap-{}.csv"
-            start_y = start[:4]
-            end_y = start[:4]
-            years = [y for y in range(int(start_y), int(end_y+1))]
-            for idx, year in enumerate(years) :
-                sub = pd.read_csv(file_path.format())
-                if idx == 0 :
-                    sub = sub[(sub.Code.isin(code_ls))&(sub.Date >= start)][['Code','Date',item]]
-                elif idx == len(years)-1 :
-                    sub = sub[(sub.Code.isin(code_ls))&(sub.Date <= end)][['Code','Date',item]]
-                else :
-                    sub = sub[(sub.Code.isin(code_ls))][['Code','Date',item]]
-                total = pd.concat([total,sub],axis=1)
-                for cd in code_ls :
-                    print("not done yet...")
-            
-            
-            
-        else :
-            if item not in self.items:
-                for itm in self.items:
-                    if item in itm:
-                        item = itm
-                    else :
-                        raise ValueError("Item you requested does not exist..")
-            #cursor = self.conn.cursor()
+                raise ValueError("colname should be either 'name' or 'code'.")
+            total = pd.concat([total, tmp],axis=1)
 
-            for cd in code_ls :
-                tmp = pd.read_sql(f"select date, value from finance_info where code='{cd}' and item='{item}' and type='{unit}' and date between '{start}' and '{end}'",self.conn)
-                tmp.index = tmp.date.values
-                tmp.drop(['date'],axis=1,inplace=True)
-                if colname == 'name':
-                    tmp.columns = [self.FindNameByCode(cd)]
-                elif colname == 'code':
-                    tmp.columns = [str(cd)]
-                else :
-                    raise ValueError("colname should be either 'name' or 'code'.")
-                total = pd.concat([total, tmp],axis=1)
-
-            total.sort_index(inplace=True)
-        
-        
-        
-        return total
+        total.sort_index(inplace=True)
 
 
 if __name__ == '__main__':
