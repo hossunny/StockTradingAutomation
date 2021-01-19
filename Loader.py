@@ -59,7 +59,10 @@ class Loader:
     def ShowItems(self):
         return self.items
     
-    def GetPrice(self, start, end, code_ls, item='close'):
+    def GetExpectedReturn(self, df):
+        return (df - df.iloc[0,:]) / df.iloc[0,:]
+
+    def GetPrice(self, start, end, code_ls, item='close',colname='code'):
         total = pd.DataFrame()
         for cd in code_ls :
             sql = f"SELECT DATE, {item} FROM DAILY_PRICE WHERE CODE = '{cd}' AND DATE BETWEEN '{start}' AND '{end}';"
@@ -68,7 +71,13 @@ class Loader:
             dt_ls = [dt.strftime("%Y-%m-%d") for dt in dt_ls]
             tmp_df.index = dt_ls
             tmp_df.drop(['DATE'], axis=1, inplace=True)
-            tmp_df.columns = [self.FindNameByCode(str(cd))]
+            if colname == 'name':
+                tmp_df.columns = [self.FindNameByCode(cd)]
+            elif colname == 'code':
+                tmp_df.columns = [str(cd)]
+            else :
+                raise ValueError("colname should be either 'name' or 'code'.")
+            #tmp_df.columns = [self.FindNameByCode(str(cd))]
             total = pd.concat([total, tmp_df], axis=1)
         total.sort_index(inplace=True)
         return total
@@ -118,7 +127,7 @@ class Loader:
         total.sort_index(inplace=True)
         return total
 
-    def GetFinance(self, start, end, code_ls=None, item='EPS', unit='Y', colname='name'):
+    def GetFinance(self, start, end, code_ls=None, item='EPS', unit='Y', colname='code'):
         print("Note that the date you requested is for the non-PIT-ness data.")
         total = pd.DataFrame()
         if item not in self.items:
