@@ -23,39 +23,95 @@ warnings.filterwarnings(action='ignore')
 import shutil
 import pyautogui
 
-def IndexCalculator(self):
-    
+def IndexCalculator(df, conn):
+    errs = []
+    cr = conn.cursor()
+    for idx, row in df.iterrows():
+        try :
+            cd = row.code
+            dt = row.date
+            tp = row.type
+            
+            tmp_marcap = f"select value from finance_info_copy where code='{cd}' and date='{dt}' and type='{tp}' and itm='시가총액'"
+            cr.execute(tmp_marcap)
+            tmp_marcap = cr.fetchone()[0]
+            tmp_asset = f"select value from finance_info_copy where code='{cd}' and date='{dt}' and type='{tp}' and itm='자산총계'"
+            cr.execute(tmp_asset)
+            tmp_asset = cr.fetchone()[0]
 
-    tmp_marcap = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='시가총액'"
-    tmp_asset = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='자산총계'"
-    tmp_netincome = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='당기순이익'"
-    tmp_equity = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='자본총계'"
-    tmp_asset = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='자산총계'"
-    tmp_stocks = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='상장주식수'"
-    tmp_ocf = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='영업활동현금흐름'"
-    tmp_profit = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='영업이익'"
-    tmp_sales = f"select value from test where code='{cd}' and date='{dt}' and type='{tp}' and item='매출액'"
+            tmp_netincome = f"select value from finance_info_copy where code='{cd}' and date='{dt}' and type='{tp}' and itm='당기순이익'"
+            cr.execute(tmp_netincome)
+            tmp_netincome = cr.fetchone()[0]
 
-    PBR = tmp_marcap / tmp_equity
-    PER = tmp_marcap / tmp_netincome
-    PCR = tmp_marcap / tmp_ocf
-    POR = tmp_marcap / tmp_profit
-    PSR = tmp_marcap / tmp_sales
-    ROE = tmp_netincome / tmp_equity
-    ROA = tmp_netincome / tmp_asset
-    EPS = tmp_netincome / tmp_stocks
-    # tmp_marcap itself
+            tmp_equity = f"select value from finance_info_copy where code='{cd}' and date='{dt}' and type='{tp}' and itm='자본총계'"
+            cr.execute(tmp_equity)
+            tmp_equity = cr.fetchone()[0]
 
-    sql = f"insert into test values('{cd}','{dt}','PBR','{tp}',PBR)"
-    sql = f"insert into test values('{cd}','{dt}','PER','{tp}',PER)"
-    sql = f"insert into test values('{cd}','{dt}','PCR','{tp}',PCR)"
-    sql = f"insert into test values('{cd}','{dt}','POR','{tp}',POR)"
-    sql = f"insert into test values('{cd}','{dt}','PSR','{tp}',PSR)"
-    sql = f"insert into test values('{cd}','{dt}','ROE','{tp}',ROE)"
-    sql = f"insert into test values('{cd}','{dt}','ROA','{tp}',ROA)"
-    sql = f"insert into test values('{cd}','{dt}','EPS','{tp}',EPS)"
-    
-    return True
+            tmp_stocks = f"select value from finance_info_copy where code='{cd}' and date='{dt}' and type='{tp}' and itm='상장주식수'"
+            cr.execute(tmp_stocks)
+            tmp_stocks = cr.fetchone()[0]
+
+            tmp_ocf = f"select value from finance_info_copy where code='{cd}' and date='{dt}' and type='{tp}' and itm='영업활동현금흐름'"
+            cr.execute(tmp_ocf)
+            tmp_ocf = cr.fetchone()[0]
+
+            tmp_profit = f"select value from finance_info_copy where code='{cd}' and date='{dt}' and type='{tp}' and itm='영업이익'"
+            cr.execute(tmp_profit)
+            tmp_profit = cr.fetchone()[0]
+
+            tmp_sales = f"select value from finance_info_copy where code='{cd}' and date='{dt}' and type='{tp}' and itm='매출액'"
+            cr.execute(tmp_sales)
+            tmp_sales = cr.fetchone()[0]
+        
+            PBR = tmp_marcap / tmp_equity if tmp_equity != 0 or tmp_equity != None else -999.9
+            PER = tmp_marcap / tmp_netincome if tmp_netincome != 0 or tmp_netincome != None else -999.9
+            PCR = tmp_marcap / tmp_ocf if tmp_ocf != 0 or tmp_ocf != None else -999.9
+            POR = tmp_marcap / tmp_profit if tmp_profit != 0 or tmp_profit != None else -999.9
+            PSR = tmp_marcap / tmp_sales if tmp_sales != 0 or tmp_sales != None else -999.9
+            ROE = tmp_netincome / tmp_equity if tmp_equity != 0 or tmp_equity != None else -999.9
+            ROA = tmp_netincome / tmp_asset if tmp_asset != 0 or tmp_asset != None else -999.9
+            EPS = tmp_netincome / tmp_stocks if tmp_stocks != 0 or tmp_stocks != None else -999.9
+            BPS = tmp_equity / tmp_stocks if tmp_stocks != 0 or tmp_stocks != None else -999.9
+            
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','PBR','{tp}',{PBR})"
+            cr.execute(sql)
+            conn.commit()
+            #cr.close()
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','PER','{tp}',{PER})"
+            cr.execute(sql)
+            conn.commit()
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','PCR','{tp}',{PCR})"
+            cr.execute(sql)
+            conn.commit()
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','POR','{tp}',{POR})"
+            cr.execute(sql)
+            conn.commit()
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','PSR','{tp}',{PSR})"
+            cr.execute(sql)
+            conn.commit()
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','ROE','{tp}',{ROE})"
+            cr.execute(sql)
+            conn.commit()
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','ROA','{tp}',{ROA})"
+            cr.execute(sql)
+            conn.commit()
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','EPS','{tp}',{EPS})"
+            cr.execute(sql)
+            conn.commit()
+            sql = f"insert into finance_info_copy values('{cd}','{dt}','BPS','{tp}',{BPS})"
+            cr.execute(sql)
+            conn.commit()
+            
+            if idx % 1000 == 0:
+                print('doing right! :', idx)
+        except Exception as e:
+            #print(e)
+            errs.append([e, idx, row])
+            if idx % 300 == 0 :
+                print('wrong!!! :',idx)
+    #conn.commit()
+    print("well done!!")
+    return errs
 
 
 def MarcapExtract(codes, td_days, conn):
