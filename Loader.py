@@ -24,9 +24,8 @@ import shutil
 
 class Loader:
     def __init__(self):
-        """Naver Finance : Financial Summary Crawler"""
         self.conn = pymysql.connect(host='localhost',user='root',
-                                   password='secret><',db='INVESTAR',charset='utf8')
+                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
         with self.conn.cursor() as curs:
             sql_load = """
             SELECT CODE, COMPANY FROM COMPANY_INFO
@@ -37,6 +36,13 @@ class Loader:
             self.comps = [str(e[1]) for e in comps_ls]
             
         self.conn.commit()
+        with open("./TradingDates.pickle", "rb") as fr:
+            self.td_days = pickle.load(fr)
+        self.items = ['매출액', '영업이익', '영업이익(발표기준)', '세전계속사업이익', '당기순이익', '당기순이익(지배)', '당기순이익(비지배)', '자산총계',
+                     '부채총계', '자본총계', '자본총계(지배)', '자본총계(비지배)', '자본금', '영업활동현금흐름', '투자활동현금흐름', '재무활동현금흐름',
+                     'CAPEX', 'FCF', '이자발생부채', '영업이익률', '순이익률', 'ROE(%)', 'ROA(%)', '부채비율', '자본유보율', 'EPS(원)', 'PER(배)', 'BPS(원)',
+                     'PBR(배)', '현금DPS(원)', '현금배당수익률', '현금배당성향(%)', '발행주식수(보통주)','시가총액','상장주식수','시가총액비중(%)',
+                     'PBR','PER','PCR','POR','PSR','ROE','ROA','EPS','BPS']
                 
     def __del__(self):
         """Disconnecting MariaDB"""
@@ -49,13 +55,18 @@ class Loader:
     def FindNameByCode(self, comp_code):
         idx = self.codes.index(comp_code)
         return self.comps[idx]
+
+    def ShowItems(self):
+        return self.items
     
-    def PriceLoader(self, start, end, code_ls, item='close'):
+    def GetPrice(self, start, end, code_ls, item='close'):
         total = pd.DataFrame()
         for cd in code_ls :
             sql = f"SELECT DATE, {item} FROM DAILY_PRICE WHERE CODE = '{cd}' AND DATE BETWEEN '{start}' AND '{end}';"
             tmp_df = pd.read_sql(sql, self.conn)
-            tmp_df.index = list(tmp_df['DATE'])
+            dt_ls = list(tmp_df['DATE'])
+            dt_ls = [dt.strftime("%Y-%m-%d") for dt in dt_ls]
+            tmp_df.index = dt_ls
             tmp_df.drop(['DATE'], axis=1, inplace=True)
             tmp_df.columns = [self.FindNameByCode(str(cd))]
             total = pd.concat([total, tmp_df], axis=1)
@@ -107,7 +118,7 @@ class Loader:
         total.sort_index(inplace=True)
         return total
 
-    def GetFinance(self, start, end, code_ls, item='EPS', unit='Y', colname='name'):
+    def GetFinance(self, start, end, code_ls=None, item='EPS', unit='Y', colname='name'):
         print("Note that the date you requested is for the non-PIT-ness data.")
         total = pd.DataFrame()
         if item not in self.items:
@@ -117,7 +128,8 @@ class Loader:
                 else :
                     raise ValueError("Item you requested does not exist..")
         #cursor = self.conn.cursor()
-
+        if code_ls == None:
+            code_ls = self.codes
         for cd in code_ls :
             tmp = pd.read_sql(f"select date, value from finance_info_copy where code='{cd}' and itm='{item}' and type='{unit}' and date between '{start}' and '{end}'",self.conn)
             tmp.index = tmp.date.values
@@ -137,7 +149,44 @@ class Loader:
             total = pd.concat([total, tmp],axis=1)
 
         total.sort_index(inplace=True)
-
+        
+        return total
+        
+    def BSLoader_v4(self, start, end, code_ls=None, item='EPS', unit='Y', colname='name'):
+        print("Note that the date you requested is for the non-PIT-ness data.")
+        total = pd.DataFrame()
+        if item not in self.items:
+            for itm in self.items:
+                if item in itm:
+                    item = itm
+                else :
+                    raise ValueError("Item you requested does not exist..")
+        #cursor = self.conn.cursor()
+        if code_ls == None:
+            code_ls = self.codes
+        
+        tmp = pd.read_sql(f"select code, date, value from finance_info_copy where code in {tuple(code_ls)} and itm='{item}' and type='{unit}' and date between '{start}' and '{end}'",self.conn)
+        tmp.index = tmp.date.values
+        for cd in code_ls :
+            sub = tmp[lambda x : x['code']==cd]
+            sub.drop(['code','date'],axis=1,inplace=True)
+            if item in ['EPS','BPS']:
+                sub['value'] = sub['value'].map(lambda x : x * 100000000)
+            elif item in ['PBR','PER','PCR','POR','PSR']:
+                sub['value'] = sub['value'].map(lambda x : x / 100000000)
+            else : #ROE, ROA don't need unit scaler
+                pass
+            if colname == 'name':
+                sub.columns = [self.FindNameByCode(cd)]
+            elif colname == 'code':
+                sub.columns = [str(cd)]
+            else :
+                raise ValueError("colname should be either 'name' or 'code'.")
+            total = pd.concat([total, sub],axis=1)
+        total.sort_index(inplace=True)
+        
+        
+        return total
 
 if __name__ == '__main__':
     print("Starting Loader...")
