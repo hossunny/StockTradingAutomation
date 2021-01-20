@@ -149,6 +149,52 @@ class Loader:
         total.sort_index(inplace=True)
         return total
 
+    def GetFinance_v2(self, start, end, code_ls=None, item='EPS', unit='Y', colname='code'):
+        print("Note that the date you requested is for the non-PIT-ness data.")
+        total = pd.DataFrame()
+        if item not in self.items:
+            for itm in self.items:
+                if item in itm:
+                    item = itm
+                else :
+                    raise ValueError("Item you requested does not exist..")
+        #cursor = self.conn.cursor()
+        default_dates = []
+        for dt in self.td_days:
+            if dt >= start and dt <= end:
+                default_dates.append(dt)
+        if code_ls == None:
+            code_ls = self.codes
+        for cd in code_ls :
+            tmp = pd.read_sql(f"select date, value from finance_info_copy where code='{cd}' and itm='{item}' and type='{unit}' and date between '{start}' and '{end}'",self.conn)
+            if len(tmp)==0:
+                if colname == 'name':
+                    tmp = pd.DataFrame(index=default_dates,columns=[self.FindNameByCode(cd)])
+                elif colname == 'code':
+                    tmp = pd.DataFrame(index=default_dates,columns=[str(cd)])
+                else :
+                    raise ValueError("colname should be either 'name' or 'code'.")
+            else :
+                tmp.index = tmp.date.values
+                tmp.drop(['date'],axis=1,inplace=True)
+                if item in ['EPS','BPS']:
+                    tmp['value'] = tmp['value'].map(lambda x : x * 100000000)
+                elif item in ['PBR','PER','PCR','POR','PSR']:
+                    tmp['value'] = tmp['value'].map(lambda x : x / 100000000)
+                else : #ROE, ROA don't need unit scaler
+                    pass
+                if colname == 'name':
+                    tmp.columns = [self.FindNameByCode(cd)]
+                elif colname == 'code':
+                    tmp.columns = [str(cd)]
+                else :
+                    raise ValueError("colname should be either 'name' or 'code'.")
+            total = pd.concat([total, tmp],axis=1)
+
+        total.sort_index(inplace=True)
+        
+        return total
+
     def GetFinance(self, start, end, code_ls=None, item='EPS', unit='Y', colname='code'):
         print("Note that the date you requested is for the non-PIT-ness data.")
         total = pd.DataFrame()

@@ -21,6 +21,8 @@ from pykrx import stock
 import warnings
 warnings.filterwarnings(action='ignore')
 import shutil
+from matplotlib.pyplot import cm
+import numpy as np
 
 class UniverseScreener:
 
@@ -163,6 +165,92 @@ class UniverseScreener:
 
         plt.show()
         return total
+
+    def VisualTest_v4(dt, conn, cut=10, term=22, itm='PBR', unit='Y', filterby=['PBR','PCR','POR']):
+        #ldr = Loader()
+        code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
+        with open("./TradingDates.pickle", "rb") as fr:
+            td_days = pickle.load(fr)
+        """Finding start date"""
+        cn = conn.cursor()
+        cn.execute("select max(date) from daily_price where code='005930'")
+        last_update = cn.fetchone()[0].strftime("%Y-%m-%d")
+        start=''
+        end=''
+        date_ls=[]
+        if unit == 'Y':
+            next_year = str(int(dt[:4])+1)
+            for td in td_days:
+                if td >= next_year+'-01-01':
+                    if td <= next_year+'-03-03':
+                        start = td
+                    elif td <= str(int(next_year)+1)+'-03-03' and td <= last_update:
+                        end = td
+                    else :
+                        break
+            pointer = td_days.index(start)
+            while (pointer <= td_days.index(end)):
+                date_ls.append(td_days[pointer])
+                pointer += term
+        elif unit == 'Q':
+            print("Not implemented yet.")
+            pass
+        else :
+            raise ValueError("Can't be..")
+                
+        print("Start Date : ",start)
+        #print("Dates : ",date_ls)
+        sub_ls = Filtering(dt, conn, by=filterby)
+        #start_dt = str(int(dt[:4])+1)+'-01-01'
+        #end_dt = str(int(dt[:4])+1)+'-12-31'
+        
+        fn_df = ldr.GetFinance(dt[:4]+'-01-01', dt+'-31', item=itm, code_ls=sub_ls, unit='Y', colname='code')
+        fn_df.dropna(axis=1, inplace=True)
+        #pr_df = ldr.GetPrice(Q1, Q5, sub_ls, item='adjprice',colname='code')
+        pr_df = ldr.GetPricePerTerm(date_ls, sub_ls, item='adjprice',colname='code')
+                
+        #pr_df = pr_df[pr_df.index.isin([Q1,Q2,Q3,Q4,Q5])]
+        pr_df.dropna(axis=1, inplace=True)
+        sub_ls = list(set(fn_df.columns).intersection(set(pr_df.columns)))
+        print("Universe Size : ",len(sub_ls))
+        fn_df = fn_df[sub_ls].T
+        fn_df.rename({dt:"value"},axis=1,inplace=True)
+        pr_df = pr_df[sub_ls]
+        pr_df = GetExpectedReturn(pr_df).T
+        pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+        total = pd.concat([fn_df,pr_df],axis=1)
+        raw_df = total.copy()
+        total = total.groupby(pd.qcut(total['value'],cut)).agg(['mean'])
+        #print(total.columns)
+        #print(date_ls)
+        total.columns = ['value']+date_ls[1:]
+        
+        date_ls = date_ls[1:]
+        """
+        row_space = round(len(date_ls)/3)
+        fig = plt.figure(figsize=(20,60))
+        for i in range(len(date_ls)):
+            #plt.subplot(row_space,2,i+1)
+            ax = fig.add_subplot(row_space,3,1+i)
+            plt.title("Expected Return at {} with {}".format(date_ls[i], itm))
+            ax.scatter(total['value'],total[date_ls[i]],color='g')
+            #plt.scatter(total['value'],total[date_ls[i]],color='g')
+
+        plt.show()"""
+        
+        color=iter(cm.rainbow(np.linspace(0,1,cut)))
+        plt.figure(figsize=(15,10))
+        plt.title("Total Expected Return at some points with {}".format(itm))
+        plt.xlabel(f"{itm} with {cut} quantile")
+        plt.ylabel('Expected Return Rate')
+        for i in range(cut):
+            c = next(color)
+            plt.plot(total.columns[1:], total.iloc[i,1:], color=c, marker='o', linestyle='--', label='{}-with-{}quantile'.format(itm,i+1))
+        #plt.legend(loc='best')
+        plt.legend(loc='upper left')
+        plt.grid(True)           
+        plt.show()
+        return total, sub_ls, raw_df
 
 if __name__ == '__main__':
     print("Starting UniverseScreener...")
