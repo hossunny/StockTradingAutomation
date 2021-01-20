@@ -45,6 +45,9 @@ class UniverseScreener:
                      'PBR(배)', '현금DPS(원)', '현금배당수익률', '현금배당성향(%)', '발행주식수(보통주)','시가총액','상장주식수','시가총액비중(%)',
                      'PBR','PER','PCR','POR','PSR','ROE','ROA','EPS','BPS']
     
+    def GetExpectedReturn(df):
+        return (df - df.iloc[0,:]) / df.iloc[0,:]
+    
     def Filtering(dt, by=None):
         conn = self.conn
         code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
@@ -97,39 +100,45 @@ class UniverseScreener:
                     raise ValueError("Can't be !!")
             return code_ls
 
-    def VisualTest(dt, conn, itm='PBR', unit='Y'):
+    def VisualTest(dt, conn, term=22, itm='PBR', unit='Y', fiterby=['PBR','PCR','POR']):
         #ldr = Loader()
         code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
         with open("./TradingDates.pickle", "rb") as fr:
             td_days = pickle.load(fr)
-        Q1 = ''#year+'-'+'03-31'
-        Q2 = ''#year+'-'+'06-31'
-        Q3 = ''#year+'-'+'09-31'
-        Q4 = ''#year+'-'+'12-31'
-        Q5 = ''
-        year = str(int(dt[:4])+1)
-        for td in td_days :
-            if td >= year+'-'+'01-01':
-                if td <= year+'-04-31':
-                    Q1 = td
-                elif td <= year+'-07-31':
-                    Q2 = td
-                elif td <= year+'-10-31':
-                    Q3 = td
-                elif td <= year+'-12-31':
-                    Q4 = td
-                elif td <= str(int(year)+1)+'-03-31':
-                    Q5 = td
-                else :
-                    break
+        """Finding start date"""
+        cn = conn.cursor()
+        cn.execute("select max(date) from daily_price where code='005930'")
+        last_update = cn.fetchone()[0].strftime("%Y-%m-%d")
+        start=''
+        date_ls=[]
+        if unit == 'Y':
+            next_year = str(int(dt[:4])+1)
+            for td in td_days:
+                if td >= next_year+'-01-01':
+                    if td <= next_year+'04-31':
+                        start = td
+                    else :
+                        break
+            pointer = td_days.index(start)
+            while (pointer <= td_days.index(last_update)):
+                date_ls.append(td_days[pointer])
+                pointer += term
+        elif unit == 'Q':
+            pass
+        else :
+            raise ValueError("Can't be..")
+                
         
-        sub_ls = Filtering(dt, conn, by=['PBR','PCR','POR'])
-        start_dt = str(int(dt[:4])+1)+'-01-01'
-        end_dt = str(int(dt[:4])+1)+'-12-31'
+        sub_ls = Filtering(dt, conn, by=fiterby)
+        #start_dt = str(int(dt[:4])+1)+'-01-01'
+        #end_dt = str(int(dt[:4])+1)+'-12-31'
+        
         fn_df = ldr.GetFinance(dt[:4]+'-01-01', dt+'-31', item=itm, code_ls=sub_ls, unit='Y', colname='code')
         fn_df.dropna(axis=1, inplace=True)
-        pr_df = ldr.GetPrice(Q1, Q5, sub_ls, item='adjprice',colname='code')
-        pr_df = pr_df[pr_df.index.isin([Q1,Q2,Q3,Q4,Q5])]
+        #pr_df = ldr.GetPrice(Q1, Q5, sub_ls, item='adjprice',colname='code')
+        pr_df = ldr.GetPricePerTerm(date_ls, sub_ls, item='adjprice',colname='code')
+                
+        #pr_df = pr_df[pr_df.index.isin([Q1,Q2,Q3,Q4,Q5])]
         pr_df.dropna(axis=1, inplace=True)
         sub_ls = list(set(fn_df.columns).intersection(set(pr_df.columns)))
         print("Universe Size : ",len(sub_ls))
@@ -140,28 +149,18 @@ class UniverseScreener:
         pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
         total = pd.concat([fn_df,pr_df],axis=1)
         total = total.groupby(pd.qcut(total['value'],10)).agg(['mean'])
-        total.columns = ['value',Q2,Q3,Q4,Q5]
-        plt.figure(figsize=(10,8))
-        plt.subplot(2,2,1)
-        plt.title('Expected Return at {} with {}'.format(Q2, itm))
-        plt.scatter(total['value'],total[Q2],color='r')
-        plt.legend(loc='best')
+        total.columns = ['value']+date_ls[1:]
         
-        plt.subplot(2,2,2)
-        plt.title('Expected Return at {} with {}'.format(Q3, itm))
-        plt.scatter(total['value'],total[Q3],color='g')
-        plt.legend(loc='best')
-        
-        plt.subplot(2,2,3)
-        plt.title('Expected Return at {} with {}'.format(Q4, itm))
-        plt.scatter(total['value'],total[Q4],color='b')
-        plt.legend(loc='best')
-        
-        plt.subplot(2,2,4)
-        plt.title('Expected Return at {} with {}'.format(Q5, itm))
-        plt.scatter(total['value'],total[Q5],color='k')
-        plt.legend(loc='best')
-        
+        date_ls = date_ls[1:]
+        row_space = round(len(date_ls)/3)
+        fig = plt.figure(figsize=(20,60))
+        for i in range(len(date_ls)):
+            #plt.subplot(row_space,2,i+1)
+            ax = fig.add_subplot(row_space,3,1+i)
+            plt.title("Expected Return at {} with {}".format(date_ls[i], itm))
+            ax.scatter(total['value'],total[date_ls[i]],color='g')
+            #plt.scatter(total['value'],total[date_ls[i]],color='g')
+
         plt.show()
         return total
 

@@ -62,6 +62,28 @@ class Loader:
     def GetExpectedReturn(self, df):
         return (df - df.iloc[0,:]) / df.iloc[0,:]
 
+    
+    def GetPricePerTerm(self, date_ls, code_ls, item='close',colname='code'):
+        total = pd.DataFrame()
+        for cd in code_ls :
+            sql = f"SELECT DATE, {item} FROM DAILY_PRICE WHERE CODE = '{cd}' AND DATE in {tuple(date_ls)};"
+            tmp_df = pd.read_sql(sql, self.conn)
+            dt_ls = list(tmp_df['DATE'])
+            dt_ls = [dt.strftime("%Y-%m-%d") for dt in dt_ls]
+            tmp_df.index = dt_ls
+            tmp_df.drop(['DATE'], axis=1, inplace=True)
+            if colname == 'name':
+                tmp_df.columns = [self.FindNameByCode(cd)]
+            elif colname == 'code':
+                tmp_df.columns = [str(cd)]
+            else :
+                raise ValueError("colname should be either 'name' or 'code'.")
+            #tmp_df.columns = [self.FindNameByCode(str(cd))]
+            total = pd.concat([total, tmp_df], axis=1)
+        total.sort_index(inplace=True)
+        return total
+    
+    
     def GetPrice(self, start, end, code_ls, item='close',colname='code'):
         total = pd.DataFrame()
         for cd in code_ls :
