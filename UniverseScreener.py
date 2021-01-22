@@ -252,6 +252,25 @@ class UniverseScreener:
         plt.show()
         return total, sub_ls, raw_df
 
+    def MultipleSubset(dt, univ, conn, cut=10, by=None):
+        if by==None:
+            by = ['PBR','PER','PCR','POR','PSR','ROE','ROA','EPS','BPS','시가총액']
+        total = pd.DataFrame(index=univ)
+        #total['code'] = univ
+        for itm in by :
+            df = pd.read_sql(f"select code, value from finance_info_copy where code in {tuple(univ)} and date='{dt}' and itm='{itm}'",conn)
+            df.index = df.code
+            df.drop(['code'],axis=1,inplace=True)
+            sub = pd.DataFrame((pd.qcut(df['value'],cut)))
+            tmp = df.groupby(pd.qcut(df['value'],cut)).agg(['mean'])
+            dct = {}
+            for ith, itvl in enumerate(tmp.index):
+                dct[itvl] = ith + 1
+            df[itm] = sub['value'].map(dct)
+            
+            total = pd.concat([total, df[[itm]]],axis=1)
+        return total
+
 if __name__ == '__main__':
     print("Starting UniverseScreener...")
     #uvscr = UniverseScreener()
