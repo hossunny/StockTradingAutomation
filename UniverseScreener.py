@@ -252,6 +252,106 @@ class UniverseScreener:
         plt.show()
         return total, sub_ls, raw_df
 
+    def VisualTest_Q(dt, conn, cut=10, term=5, itm='PBR', unit='1Q', filterby=['PBR','PCR','POR']):
+        #ldr = Loader()
+        code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
+        with open("./TradingDates.pickle", "rb") as fr:
+            td_days = pickle.load(fr)
+        """Finding start date"""
+        cn = conn.cursor()
+        cn.execute("select max(date) from daily_price where code='005930'")
+        last_update = cn.fetchone()[0].strftime("%Y-%m-%d")
+        start=''
+        end=''
+        date_ls=[]
+        year = dt[:4]
+        if unit=='1Q':
+            for td in td_days:
+                if td >= year+'-05-15':
+                    if td <= year+'-05-31':
+                        start = td
+                    elif td <= year+'-08-10':
+                        end = td
+                    else :
+                        break
+            pointer = td_days.index(start)
+            while (pointer <= td_days.index(end)):
+                date_ls.append(td_days[pointer])
+                pointer += term
+        elif unit=='2Q':
+            for td in td_days:
+                if td >= year+'-08-15':
+                    if td <= year+'-08-31':
+                        start = td
+                    elif td <= year+'-11-10':
+                        end = td
+                    else :
+                        break
+            pointer = td_days.index(start)
+            while (pointer <= td_days.index(end)):
+                date_ls.append(td_days[pointer])
+                pointer += term
+        elif unit=='3Q':
+            for td in td_days:
+                if td >= year+'-11-15':
+                    if td <= year+'11-31':
+                        start = td
+                    elif td <= str(int(year)+1)+'-03-01':
+                        end = td
+                    else :
+                        break
+            pointer = td_days.index(start)
+            while (pointer <= td_days.index(end)):
+                date_ls.append(td_days[pointer])
+                pointer += term
+        else :
+            raise ValueError("Not proper quarter!")
+        
+        print("Start Date : ",start)
+        sub_ls = Filtering(dt, conn, by=filterby)
+        if unit=='1Q':
+            fn_df = ldr.GetFinance(dt[:4]+'-02-01', dt+'-31',item=itm, code_ls=sub_ls, unit='Q', colname='code')
+        elif unit=='2Q':
+            fn_df = ldr.GetFinance(dt[:4]+'-05-01', dt+'-31',item=itm, code_ls=sub_ls, unit='Q', colname='code')
+        elif unit=='3Q':
+            fn_df = ldr.GetFinance(dt[:4]+'-08-01', dt+'-31',item=itm, code_ls=sub_ls, unit='Q', colname='code')
+        #fn_df = ldr.GetFinance(dt[:4]+'-01-01', dt+'-31', item=itm, code_ls=sub_ls, unit='Q', colname='code')
+        fn_df.dropna(axis=1, inplace=True)
+        #pr_df = ldr.GetPrice(Q1, Q5, sub_ls, item='adjprice',colname='code')
+        pr_df = ldr.GetPricePerTerm(date_ls, sub_ls, item='adjprice',colname='code')
+                
+        #pr_df = pr_df[pr_df.index.isin([Q1,Q2,Q3,Q4,Q5])]
+        pr_df.dropna(axis=1, inplace=True)
+        sub_ls = list(set(fn_df.columns).intersection(set(pr_df.columns)))
+        print("Universe Size : ",len(sub_ls))
+        fn_df = fn_df[sub_ls].T
+        fn_df.rename({dt:"value"},axis=1,inplace=True)
+        pr_df = pr_df[sub_ls]
+        pr_df = GetExpectedReturn(pr_df).T
+        pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+        total = pd.concat([fn_df,pr_df],axis=1)
+        #return fn_df, pr_df, total
+        raw_df = total.copy()
+        total = total.groupby(pd.qcut(total['value'],cut)).agg(['mean'])
+        #print(total.columns)
+        #print(date_ls)
+        total.columns = ['value']+date_ls[1:]
+        
+        date_ls = date_ls[1:]
+        color=iter(cm.rainbow(np.linspace(0,1,cut)))
+        plt.figure(figsize=(15,10))
+        plt.title("Total Expected Return at some points with {}".format(itm))
+        plt.xlabel(f"{itm} with {cut} quantile")
+        plt.ylabel('Expected Return Rate')
+        for i in range(cut):
+            c = next(color)
+            plt.plot(total.columns[1:], total.iloc[i,1:], color=c, marker='o', linestyle='--', label='{}-with-{}quantile'.format(itm,i+1))
+        #plt.legend(loc='best')
+        plt.legend(loc='upper left')
+        plt.grid(True)           
+        plt.show()
+        return total   #, sub_ls, raw_df
+
     def MultipleSubset(dt, univ, conn, cut=10, by=None):
         if by==None:
             by = ['PBR','PER','PCR','POR','PSR','ROE','ROA','EPS','BPS','시가총액']
