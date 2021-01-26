@@ -641,6 +641,138 @@ class UniverseScreener:
         total.sort_values(by=['gmean'],ascending=False,inplace=True)
         return total[['mean','gmean','label']]
 
+    def GeometricMean(df):
+        """Note that df must be ii x di"""
+        gmean = pd.DataFrame(np.exp(np.log((df+1).prod(axis=1))/(df+1).notna().sum(1))).T
+        gmean = np.exp(np.log(gmean.prod(axis=1))/gmean.notna().sum(1)).values[0]
+        return gmean
+
+    def FundaComparison(dt, end, term=10, funda_ls=['PBR','PCR']):
+        """Paradox of Simpson"""
+        with open("./TradingDates.pickle","rb") as fr :
+            td_days = pickle.load(fr)
+        conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        cn = conn.cursor()
+        cn.execute("select max(date) from daily_price where code='005930'")
+        last_update = cn.fetchone()[0].strftime("%Y-%m-%d")
+        date_ls=[]
+        end_date=''
+        next_year = str(int(dt[:4])+1)
+        if end > last_update : end = last_update 
+        for td in td_days :
+            if td >= next_year+'-01-01':
+                if td <= next_year+'-03-03':
+                    start = td
+                elif td <= end :
+                    end_date = td
+                else :
+                    break
+        pointer = td_days.index(start)
+        while (pointer <= td_days.index(end_date)):
+            date_ls.append(td_days[pointer])
+            pointer += term
+        
+        filtered_ls = Filtering(dt, conn, by=['PBR','PCR','POR'])
+        print("Initial Filtered Univ : {}".format(len(filtered_ls)))
+        print("EX : {}".format(filtered_ls[:5]))
+        if funda_ls == None :
+            raise ValueError("Funda must be inserted.")
+        elif len(funda_ls) == 1 :
+            funda_univ = FundaUniv(dt, funda_ls=funda_ls)
+            print("Funda Filtered Univ : {}".format(len(funda_univ)))
+            print("EX : {}".format(funda_univ[:5]))
+            pr_df = ldr.GetPricePerTerm(date_ls, funda_univ, item='adjprice',colname='code')        
+            pr_df.dropna(axis=1, inplace=True)
+            pr_df = GetExpectedReturn(pr_df).T
+            pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+            gmean_funda = GeometricMean(pr_df)
+            
+            rest_ls = list(set(filtered_ls) - set(funda_univ))
+            print("Rest Filtered Univ : {}".format(len(rest_ls)))
+            print("EX : {}".format(rest_ls[:5]))
+            pr_df = ldr.GetPricePerTerm(date_ls, rest_ls, item='adjprice',colname='code')      
+            pr_df.dropna(axis=1, inplace=True)
+            print("After Nan erased : {}".format(pr_df.shape[1]))
+            pr_df = GetExpectedReturn(pr_df).T
+            pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+            gmean_rest = GeometricMean(pr_df)
+            return pd.DataFrame(data=[gmean_funda, gmean_rest], index=['FundaGmean','RestGmean'], columns=[start+'~'+end_date]).T
+        else :
+            funda_univ = FundaUniv(dt, funda_ls=funda_ls)
+            if len(funda_univ)==0:
+                total = pd.DataFrame(columns=[start+'~'+end_date]).T
+            else :    
+                print("Funda-All Filtered Univ : {}".format(len(funda_univ)))
+                print("EX : {}".format(funda_univ[:5]))
+                pr_df = ldr.GetPricePerTerm(date_ls, funda_univ, item='adjprice',colname='code')        
+                pr_df.dropna(axis=1, inplace=True)
+                pr_df = GetExpectedReturn(pr_df).T
+                pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+                gmean_funda = GeometricMean(pr_df)
+
+                rest_ls = list(set(filtered_ls) - set(funda_univ))
+                print("Rest-All Filtered Univ : {}".format(len(rest_ls)))
+                print("EX : {}".format(rest_ls[:5]))
+                pr_df = ldr.GetPricePerTerm(date_ls, rest_ls, item='adjprice',colname='code')      
+                pr_df.dropna(axis=1, inplace=True)
+                print("After Nan erased : {}".format(pr_df.shape[1]))
+                pr_df = GetExpectedReturn(pr_df).T
+                pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+                gmean_rest = GeometricMean(pr_df)
+
+                total = pd.DataFrame(data=[gmean_funda, gmean_rest], index=['FundaAllGmean','RestAllGmean'], columns=[start+'~'+end_date]).T
+            print('-----------------------------------------------------------------------------------------------------------------')
+            
+            for fd in funda_ls :
+                funda_univ = FundaUniv(dt, funda_ls=[fd])
+                print("Funda Filtered Univ : {}".format(len(funda_univ)))
+                print("EX : {}".format(funda_univ[:5]))
+                pr_df = ldr.GetPricePerTerm(date_ls, funda_univ, item='adjprice',colname='code')        
+                pr_df.dropna(axis=1, inplace=True)
+                pr_df = GetExpectedReturn(pr_df).T
+                pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+                gmean_funda = GeometricMean(pr_df)
+                
+                rest_ls = list(set(filtered_ls) - set(funda_univ))
+                print("Rest Filtered Univ : {}".format(len(rest_ls)))
+                print("EX : {}".format(rest_ls[:5]))
+                pr_df = ldr.GetPricePerTerm(date_ls, rest_ls, item='adjprice',colname='code')      
+                pr_df.dropna(axis=1, inplace=True)
+                print("After Nan erased : {}".format(pr_df.shape[1]))
+                pr_df = GetExpectedReturn(pr_df).T
+                pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+                gmean_rest = GeometricMean(pr_df)
+            
+                tmp = pd.DataFrame(data=[gmean_funda, gmean_rest], index=['{}Gmean'.format(fd),'Rest{}Gmean'.format(fd)], columns=[start+'~'+end_date]).T
+                
+                total = pd.concat([total,tmp],axis=1)
+            return total
+
+
+    def FundaUniv(dt, funda_ls=['PBR','PCR']):
+        conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        filtered_ls = Filtering(dt, conn, by=['PBR','PCR','POR'])
+        total = MultipleSubset(dt, filtered_ls, conn, cut=5)
+        total.dropna(axis=0, how='any', inplace=True)
+        
+        pbr = pcr = por = psr = per = eps = bps = roe = roa = mcp = [1,2,3,4,5]
+        if funda_ls != None:
+            for fd in funda_ls :
+                if fd == 'PBR' : pbr = [3,5]
+                elif fd == 'PCR' : pcr = [3,2]
+                elif fd == 'POR' : por = [3,4,5]
+                elif fd == 'PSR' : psr = [3,2]
+                elif fd == 'PER' : per = [3,4]
+                elif fd == 'EPS' : eps = [2,4]
+                elif fd == 'BPS' : bps = [4,1]
+                elif fd == 'ROE' : roe = [5,4,3]
+                elif fd == 'ROA' : roa = [5,4]
+                elif fd == 'MCP' : mcp = [4,1,2]
+                else : pass
+        return list(total[(total.PBR.isin(pbr))&(total.PCR.isin(pcr))&(total.POR.isin(por))&(total.PSR.isin(psr))
+                    &(total.PER.isin(per))&(total.EPS.isin(eps))&(total.BPS.isin(bps))&(total.ROE.isin(roe))
+                    &(total.ROA.isin(roa))&(total.시가총액.isin(mcp))].index)    
+
 if __name__ == '__main__':
     print("Starting UniverseScreener...")
     #uvscr = UniverseScreener()
