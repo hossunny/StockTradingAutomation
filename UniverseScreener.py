@@ -23,6 +23,7 @@ warnings.filterwarnings(action='ignore')
 import shutil
 from matplotlib.pyplot import cm
 import numpy as np
+import scipy.stats as stats
 
 class UniverseScreener:
 
@@ -772,6 +773,59 @@ class UniverseScreener:
         return list(total[(total.PBR.isin(pbr))&(total.PCR.isin(pcr))&(total.POR.isin(por))&(total.PSR.isin(psr))
                     &(total.PER.isin(per))&(total.EPS.isin(eps))&(total.BPS.isin(bps))&(total.ROE.isin(roe))
                     &(total.ROA.isin(roa))&(total.시가총액.isin(mcp))].index)    
+
+    def SummaryDataFrame(dt, end, term=10, funda_ls=['PBR','PCR']):
+        """Paradox of Simpson"""
+        with open("./TradingDates.pickle","rb") as fr :
+            td_days = pickle.load(fr)
+        conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        cn = conn.cursor()
+        cn.execute("select max(date) from daily_price where code='005930'")
+        last_update = cn.fetchone()[0].strftime("%Y-%m-%d")
+        date_ls=[]
+        end_date=''
+        next_year = str(int(dt[:4])+1)
+        if end > last_update : end = last_update 
+        for td in td_days :
+            if td >= next_year+'-01-01':
+                if td <= next_year+'-03-03':
+                    start = td
+                elif td <= end :
+                    end_date = td
+                else :
+                    break
+        pointer = td_days.index(start)
+        while (pointer <= td_days.index(end_date)):
+            date_ls.append(td_days[pointer])
+            pointer += term
+        
+        filtered_ls = Filtering(dt, conn, by=['PBR','PCR','POR'])
+        print("Initial Filtered Univ : {}".format(len(filtered_ls)))
+        print("EX : {}".format(filtered_ls[:5]))
+        total = pd.DataFrame(index = filtered_ls, columns = funda_ls+['gmean'])
+        fn_df = pd.read_sql(f"select code, itm, value from finance_info_copy where code in {tuple(filtered_ls)} and date='{dt}' and itm in {tuple(funda_ls)}",conn)
+        fn_df = fn_df[lambda x : x['value']!=-999.9]
+        for idx, row in fn_df.iterrows():
+            total.loc[row.code, row.itm] = row.value
+        
+        pr_df = ldr.GetPricePerTerm(date_ls, filtered_ls, item='adjprice',colname='code')        
+        pr_df.dropna(axis=1, inplace=True)
+        pr_df = GetExpectedReturn(pr_df).T
+        pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
+        gmean_df = pd.DataFrame(np.exp(np.log((pr_df+1).prod(axis=1))/(pr_df+1).notna().sum(1)))
+        gmean_df.columns = ['gmean']
+        for cdx, row in gmean_df.iterrows():
+            total.loc[cdx,'gmean'] = row.gmean
+        return total.astype(float)
+
+    def CorrTable(df):
+        ls = list(df.columns)
+        for i in range(len(ls)) :
+            for j in range(len(ls)) :
+                if i<j :
+                    if stats.pearsonr(df[ls[i]],df[ls[j]])[1] < 0.05 :
+                        print("{} & {} are correlated -> corr : {} | p-value : {}".format(ls[i], ls[j], stats.pearsonr(df[ls[i]],df[ls[j]])[0], stats.pearsonr(df[ls[i]],df[ls[j]])[1]))
+        return df.corr()
 
 if __name__ == '__main__':
     print("Starting UniverseScreener...")
