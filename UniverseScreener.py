@@ -48,8 +48,11 @@ class UniverseScreener:
                      'PBR(배)', '현금DPS(원)', '현금배당수익률', '현금배당성향(%)', '발행주식수(보통주)','시가총액','상장주식수','시가총액비중(%)',
                      'PBR','PER','PCR','POR','PSR','ROE','ROA','EPS','BPS']
     
-    def GetExpectedReturn(df):
-        return (df - df.iloc[0,:]) / df.iloc[0,:]
+    def GetExpectedReturn(df, initial=True):
+        if initial:
+            return (df - df.iloc[0,:]) / df.iloc[0,:]
+        else :
+            return ((df - df.shift(1)) / df.shift(1)).fillna(0)
     
     def Filtering(dt, by=None):
         conn = self.conn
@@ -774,7 +777,7 @@ class UniverseScreener:
                     &(total.PER.isin(per))&(total.EPS.isin(eps))&(total.BPS.isin(bps))&(total.ROE.isin(roe))
                     &(total.ROA.isin(roa))&(total.시가총액.isin(mcp))].index)    
 
-    def SummaryDataFrame(dt, end, term=10, funda_ls=['PBR','PCR']):
+    def SummaryDataFrame(dt, end, term=10, funda_ls=['PBR','PCR'], initial=True):
         """Paradox of Simpson"""
         with open("./TradingDates.pickle","rb") as fr :
             td_days = pickle.load(fr)
@@ -810,7 +813,7 @@ class UniverseScreener:
         
         pr_df = ldr.GetPricePerTerm(date_ls, filtered_ls, item='adjprice',colname='code')        
         pr_df.dropna(axis=1, inplace=True)
-        pr_df = GetExpectedReturn(pr_df).T
+        pr_df = GetExpectedReturn(pr_df, initial=initial).T
         pr_df.drop(columns=pr_df.columns[0],axis=1,inplace=True)
         gmean_df = pd.DataFrame(np.exp(np.log((pr_df+1).prod(axis=1))/(pr_df+1).notna().sum(1)))
         gmean_df.columns = ['gmean']
@@ -826,6 +829,37 @@ class UniverseScreener:
                     if stats.pearsonr(df[ls[i]],df[ls[j]])[1] < 0.05 :
                         print("{} & {} are correlated -> corr : {} | p-value : {}".format(ls[i], ls[j], stats.pearsonr(df[ls[i]],df[ls[j]])[0], stats.pearsonr(df[ls[i]],df[ls[j]])[1]))
         return df.corr()
+
+    def SectorFundaPrice(dt, fltr_by = None):
+        conn = pymysql.connect(host='localhost',user='root',password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        ftrd_ls, sector_dict = FilteringCondition(dt, eqty=0.1, volm=0.1, sctr=5, by=fltr_by)
+        cn = conn.cursor()
+        cn.execute("select max(date) from daily_price where code='005930'")
+        last_update = cn.fetchone()[0].strftime("%Y-%m-%d")
+        end = str(int(dt[:4])+2)+'-02-28'
+        if end > last_update :
+            end = last_update
+        df = ldr.GetPrice(str(int(dt[:4])+1)+'-03-31', end, ftrd_ls, item='adjprice', colname='code')
+        df = df.dropna(axis=1,how='any')
+        df = GetExpectedReturn(df,True)
+        tmp = pd.DataFrame(index = list(df.columns), columns=['sector'])
+        tmp['sector'] = tmp.index.map(sector_dict)
+        sctr_ls = list(tmp['sector'].value_counts()[lambda x : x>=5].index)
+        over_ls = []
+        total = pd.DataFrame(index = sctr_ls, columns=['C1','C1(%)'])
+        for sc in sctr_ls :
+            sc_idx = list(tmp[lambda x : x['sector']==sc].index)
+            sub_df = df[sc_idx]
+            cnt = 0
+            for c in sub_df.columns :
+                if len(sub_df[lambda x : x[c]>=0.3])>0 or (sub_df[c].values[-1]>=0.2) :
+                    if len(sub_df[lambda x : x[c]<=-0.23])==0 :
+                        cnt += 1
+            total.loc[sc,'C1'] = cnt
+            total.loc[sc,'C1(%)'] = cnt / len(sc_idx)
+        
+        return total, df
+
 
 if __name__ == '__main__':
     print("Starting UniverseScreener...")
