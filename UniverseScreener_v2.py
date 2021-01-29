@@ -177,7 +177,7 @@ def SectorAnalysis(dt):
     exist_ls = list(funda.index)
     df = ldr.GetPrice(start, end, exist_ls, item='adjprice', colname='code')
     df = df.dropna(axis=1,how='any')
-    df = GetExpectedReturn(df,True)
+    df = GetExpectedReturn_v2(df,True)
     tmp = pd.DataFrame(index = list(df.columns), columns=['sector'])
     tmp['sector'] = tmp.index.map(sector_dict)
     sctr_ls = list(tmp['sector'].value_counts()[lambda x : x>=20].index)
@@ -206,14 +206,14 @@ def SectorAnalysis(dt):
                             cnt += 1
                             c1_ls.append(cl)
                     #tmp_df = (sub_df[lambda x : x[cl]>0]+1)
-                    tmp_df = sub_df[lambda x : x[cl]>0]
+                    tmp_df = sub_df[lambda x : x[cl]>0]+1
                     gmeans.append(np.exp(np.log(tmp_df.T.prod(axis=1))/tmp_df.T.notna().sum(1)).values[0])
                     means.append(tmp_df[cl].mean())
                     if tmp_df[cl].mean == np.nan:
                         print(cl)
 
                     #tmp_df_m = (sub_df[lambda x : x[cl]<0]+1)
-                    tmp_df_m = sub_df[lambda x : x[cl]<0]*(-1)
+                    tmp_df_m = sub_df[lambda x : x[cl]<0]*(-1)+1
                     gmeans_m.append(np.exp(np.log(tmp_df_m.T.prod(axis=1))/tmp_df_m.T.notna().sum(1)).values[0])
                     means_m.append(tmp_df_m[cl].mean())
                 
@@ -234,3 +234,100 @@ def SectorAnalysis(dt):
         
     rst.sort_values(by=['C1(%)','C21-GMean','C22-GMean'],ascending=False,inplace=True)
     return rst
+
+def GetExpectedReturn_v2(df, initial=True):
+    if initial:
+        start_date = df.index[0]
+        with open("./TradingDates.pickle","rb") as fr :
+            td_days = pickle.load(fr)
+        idx = td_days.index(df.index[0])
+        dates = td_days[idx-19:idx+1]
+        sub_df = ldr.GetPrice(dates[0],dates[-1],list(df.columns),item='adjprice',colname='code')
+        tdf = df.copy()
+        tdf.iloc[0,:] = sub_df.mean().values
+        return (tdf - tdf.iloc[0,:]) / tdf.iloc[0,:]
+    else :
+        return ((df - df.shift(1)) / df.shift(1)).fillna(0)
+
+
+
+def AnnualSectorDist(sc_df_ls):
+    """sc_df_ls = [sc2016,sc2017,sc2018,sc2019]"""
+    rst = pd.DataFrame(columns=['Date','Funda','Pattern','C21-Best','C22-Best'])
+    year = 2016
+    for df in sc_df_ls:
+        for sc in list(set(df.index)):
+            for fd in ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']:
+                tmp = pd.DataFrame(index=[sc],columns=['Date','Funda','Pattern','C21-Best','C22-Best'])
+                sub_df = df[df['FD-Q'].isin([fd+'-'+str(i) for i in [1,2,3]])].loc[sc]
+                tmp.loc[sc,'Date'] = str(year)+'-12'
+                tmp.loc[sc,'Funda'] = fd
+                tmp.loc[sc,'C21-Best'] = sub_df.sort_values(by=['C21-GMean'],ascending=False).loc[sc,'FD-Q'][0][-1]
+                tmp.loc[sc,'C22-Best'] = sub_df.sort_values(by=['C22-GMean']).loc[sc,'FD-Q'][0][-1]
+                if tmp.loc[sc,'C21-Best'] == tmp.loc[sc,'C22-Best']:
+                    tmp.loc[sc,'Pattern'] = 'Y'
+                else :
+                    tmp.loc[sc,'Pattern'] = 'N'
+                rst = pd.concat([rst,tmp])
+        year += 1
+    return rst
+
+def QuarterSectorDist(sc_df_ls):
+    """sc_df_ls = [sc2016,sc2017,sc2018,sc2019]"""
+    rst = pd.DataFrame(columns=['Date','Funda','Pattern','C21-Best','C22-Best'])
+    ith = 0
+    dts = ['2019-09','2020-03','2020-06']
+    for df in sc_df_ls:
+        for sc in list(set(df.index)):
+            for fd in ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']:
+                tmp = pd.DataFrame(index=[sc],columns=['Date','Funda','Pattern','C21-Best','C22-Best'])
+                sub_df = df[df['FD-Q'].isin([fd+'-'+str(i) for i in [1,2,3]])].loc[sc]
+                tmp.loc[sc,'Date'] = dts[ith]
+                tmp.loc[sc,'Funda'] = fd
+                tmp.loc[sc,'C21-Best'] = sub_df.sort_values(by=['C21-GMean'],ascending=False).loc[sc,'FD-Q'][0][-1]
+                tmp.loc[sc,'C22-Best'] = sub_df.sort_values(by=['C22-GMean']).loc[sc,'FD-Q'][0][-1]
+                if tmp.loc[sc,'C21-Best'] == tmp.loc[sc,'C22-Best']:
+                    tmp.loc[sc,'Pattern'] = 'Y'
+                else :
+                    tmp.loc[sc,'Pattern'] = 'N'
+                rst = pd.concat([rst,tmp])
+        ith += 1
+    return rst
+
+def Patternize(sec_df, fltr=None):
+    """3 : 0.5/0.3/0.2 | 4 :"""
+    total = pd.DataFrame(columns=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액'])
+    for sc in list(set(sec_df.index)):
+        tmp = pd.DataFrame(index=[sc],columns=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액'])
+        for fd in list(set(sec_df.Funda.values)):
+            try :
+                sub_df = sec_df[(sec_df.Pattern=='Y')&(sec_df.index.isin([sc]))&(sec_df.Funda==fd)]
+                #tmp = pd.DataFrame(index=[sc],columns=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액'])
+                if len(sub_df)==4 :
+                    if len(set(sub_df['C21-Best'].values))==1:
+                        tmp.loc[sc,fd] = str(sub_df['C21-Best'].values[0]) + '-Type1'
+                    elif len(set(sub_df['C21-Best'].values))==2:
+                        tmp.loc[sc,fd] = str(sub_df.sort_values(by=['Date'])['C21-Best'].values[-1]) + '-Type2'
+                    elif len(set(sub_df['C21-Best'].values))==3:
+                        tmp.loc[sc,fd] = str(sub_df['C21-Best'].value_counts().sort_values(ascending=False).index[0]) + '-Type3'
+                    else : # 이 경우는 없겠네;; 분할이 1~3 뿐이니까
+                        #tmp.loc[sc,fd] = '-1-Type4'
+                        pass
+                elif len(sub_df)!=0:
+                    sub_df = sec_df[(sec_df.index.isin([sc]))&(sec_df.Funda==fd)]
+                    tmp.loc[sc,fd] = str(sub_df['C22-Best'].value_counts().sort_values(ascending=False).index[0]) + '-Type4'
+                else :
+                    sub_df = sec_df[(sec_df.index.isin([sc]))&(sec_df.Funda==fd)]
+                    tmp.loc[sc,fd] = str(sub_df['C22-Best'].value_counts().sort_values(ascending=False).index[0]) + '-Type5'
+            except :
+                pass
+        total = pd.concat([total,tmp])
+        
+    if fltr == None :
+        return total
+    else :
+        for sc in list(total.index) :
+            for fd in list(total.columns):
+                if total.loc[sc,fd].split('-')[-1] in fltr :
+                    total.loc[sc,fd] = np.nan
+        return total
