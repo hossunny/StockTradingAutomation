@@ -331,3 +331,220 @@ def Patternize(sec_df, fltr=None):
                 if total.loc[sc,fd].split('-')[-1] in fltr :
                     total.loc[sc,fd] = np.nan
         return total
+
+def AnnualSectorDist_v3(sc_df_ls, initial=True):
+    """sc_df_ls = [sc2016,sc2017,sc2018,sc2019]"""
+    rst = pd.DataFrame(columns=['Date','Funda','Pattern','C31-Best','C32-Best'])
+    year = 2016
+    for df in sc_df_ls:
+        if year == 2019 :
+            start = str(year+1)+'-03-31'
+            end = str(year+1)+'-12-31'
+        else :
+            start = str(year+1)+'-03-31'
+            end = str(year+2)+'-02-28'
+        for sc in list(set(df.index)):
+            for fd in ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']:
+                tmp = pd.DataFrame(index=[sc],columns=['Date','Funda','Pattern','C31-Best','C32-Best'])
+                ger_total = pd.DataFrame()
+                mer_total = pd.DataFrame()
+                for ith in ['1','2','3']:
+                    sc_idx = df[df['FD-Q'].isin([fd+'-'+ith])]['Codes'].values[0]
+                    pr = ldr.GetPrice(start, end, sc_idx, item='adjprice',colname='code')
+                    pr = pr.dropna(axis=1,how='any')
+                    er = GetExpectedReturn_v2(pr,initial) +1
+                    gm_pr = pd.DataFrame(np.exp(np.log(er.prod(axis=1))/er.notna().sum(1)),columns=[fd+'-'+ith])
+                    am_pr = pd.DataFrame(er.T.mean(), columns=[fd+'-'+ith])
+                    ger_total = pd.concat([ger_total, gm_pr],axis=1).dropna(axis=0,how='any')
+                    mer_total = pd.concat([mer_total, am_pr],axis=1).dropna(axis=0,how='any')
+                a = b = c = 0
+                for d in list(ger_total.index):
+                    idx = ger_total.loc[d].idxmax()
+                    if idx == fd+'-1': a+=1
+                    elif idx == fd+'-2' : b+=1
+                    elif idx == fd+'-3' : c+=1
+                    else : raise ValueError("Can't be !!!")
+                var = {a:fd+'-1', b:fd+'-2', c:fd+'-3'}
+                tmp.loc[sc,'C31-Best'] = var.get(max(var))
+                x = y = z = 0
+                for d in list(mer_total.index):
+                    idx = mer_total.loc[d].idxmax()
+                    if idx == fd+'-1': x+=1
+                    elif idx == fd+'-2' : y+=1
+                    elif idx == fd+'-3' : z+=1
+                    else : raise ValueError("Can't be !!!")
+                var2 = {x:fd+'-1', y:fd+'-2', z:fd+'-3'}
+                tmp.loc[sc,'C32-Best'] = var2.get(max(var2))
+                tmp.loc[sc,'Date'] = str(year)+'-12'
+                tmp.loc[sc,'Funda'] = fd
+                if tmp.loc[sc,'C31-Best'] == tmp.loc[sc,'C32-Best']:
+                    tmp.loc[sc,'Pattern'] = 'Y'
+                else :
+                    tmp.loc[sc,'Pattern'] = 'N'
+                rst = pd.concat([rst,tmp])
+        year += 1
+    return rst
+
+def AnnualSectorDist_v2(sc_df_ls):
+    """sc_df_ls = [sc2016,sc2017,sc2018,sc2019]"""
+    rst = pd.DataFrame(columns=['Date','Funda','Pattern','C2-GBest','C2-MBest'])
+    year = 2016
+    for df in sc_df_ls:
+        for sc in list(set(df.index)):
+            for fd in ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']:
+                tmp = pd.DataFrame(index=[sc],columns=['Date','Funda','Pattern','C2-GBest','C2-MBest'])
+                sub_df = df[df['FD-Q'].isin([fd+'-'+str(i) for i in [1,2,3]])].loc[sc]
+                tmp.loc[sc,'Date'] = str(year)+'-12'
+                tmp.loc[sc,'Funda'] = fd
+                tmp.loc[sc,'C2-GBest'] = sub_df.sort_values(by=['C2-GMean'],ascending=False).loc[sc,'FD-Q'][0][-1]
+                tmp.loc[sc,'C2-MBest'] = sub_df.sort_values(by=['C2-Mean']).loc[sc,'FD-Q'][0][-1]
+                if tmp.loc[sc,'C2-GBest'] == tmp.loc[sc,'C2-MBest']:
+                    tmp.loc[sc,'Pattern'] = 'Y'
+                else :
+                    tmp.loc[sc,'Pattern'] = 'N'
+                rst = pd.concat([rst,tmp])
+        year += 1
+    return rst
+
+def Patternize_v3(sec_df, fltr=None):
+    """3 : 0.5/0.3/0.2 | 4 :"""
+    total = pd.DataFrame(columns=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액'])
+    for sc in list(set(sec_df.index)):
+        tmp = pd.DataFrame(index=[sc],columns=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액'])
+        for fd in list(set(sec_df.Funda.values)):
+            try :
+                sub_df = sec_df[(sec_df.Pattern=='Y')&(sec_df.index.isin([sc]))&(sec_df.Funda==fd)]
+                #tmp = pd.DataFrame(index=[sc],columns=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액'])
+                if len(sub_df)==4 :
+                    if len(set(sub_df['C32-Best'].values))==1:
+                        tmp.loc[sc,fd] = str(sub_df['C32-Best'].values[0]) + '-Type1'
+                    elif len(set(sub_df['C32-Best'].values))==2:
+                        tmp.loc[sc,fd] = str(sub_df.sort_values(by=['Date'])['C32-Best'].values[-1]) + '-Type2'
+                    elif len(set(sub_df['C32-Best'].values))==3:
+                        tmp.loc[sc,fd] = str(sub_df['C32-Best'].value_counts().sort_values(ascending=False).index[0]) + '-Type3'
+                    else : # 이 경우는 없겠네;; 분할이 1~3 뿐이니까
+                        #tmp.loc[sc,fd] = '-1-Type4'
+                        pass
+                elif len(sub_df)!=0:
+                    sub_df = sec_df[(sec_df.index.isin([sc]))&(sec_df.Funda==fd)]
+                    tmp.loc[sc,fd] = str(sub_df['C32-Best'].value_counts().sort_values(ascending=False).index[0]) + '-Type4'
+                else :
+                    sub_df = sec_df[(sec_df.index.isin([sc]))&(sec_df.Funda==fd)]
+                    tmp.loc[sc,fd] = str(sub_df['C32-Best'].value_counts().sort_values(ascending=False).index[0]) + '-Type5'
+            except :
+                pass
+        total = pd.concat([total,tmp])
+        
+    if fltr == None :
+        return total
+    else :
+        for sc in list(total.index) :
+            for fd in list(total.columns):
+                if total.loc[sc,fd].split('-')[-1] in fltr :
+                    total.loc[sc,fd] = np.nan
+        return total
+
+def FPVisual(FP, sc_df, dt):
+    start = str(int(dt[:4])+1)+'-03-31'
+    if dt != '2019-12':
+        end = str(int(dt[:4])+2)+'-02-28'
+    else :
+        end = '2020-12-31'
+    for sc in list(FP.index):
+        sc_dict = FP.loc[sc,:].dropna(axis=0).to_dict()
+        if len(sc_dict)==0:
+            continue
+        else :
+            for sc_key in sc_dict.keys():
+                BestQuantile = sc_dict[sc_key].split('-')[0]
+                color=iter(cm.rainbow(np.linspace(0,1,3)))
+                plt.figure(figsize=(16,12))
+                print(sc, sc_key, sc_dict[sc_key])
+                plt.title("Total Expected Return in sector {} with {}".format(sc,sc_key))
+                plt.xlabel(f"{sc_key} with 3 quantile")
+                plt.ylabel('Expected Return Rate')
+                for ith in [1,2,3]:
+                    if str(ith) == BestQuantile :
+                        sc_idx = sc_df[sc_df.index.isin([sc])&(sc_df['FD-Q']==sc_key+'-'+str(ith))]['Codes'].values[0]
+                        pr = ldr.GetPrice(start, end, sc_idx, item='adjprice',colname='code')
+                        #print('shape of origin pr : ',pr.shape)
+                        pr = pr.dropna(axis=1, how='any')
+                        #print('shape of non-nan pr : ',pr.shape)
+                        mean_er = GetExpectedReturn_v2(pr,False).T.mean()
+                        #c = next(color)
+                        plt.plot(list(mean_er.index), mean_er.values, color='black', linestyle='--', label='Best : {}'.format(sc_key+'-'+str(ith)))
+                    else :
+                        sc_idx = sc_df[sc_df.index.isin([sc])&(sc_df['FD-Q']==sc_key+'-'+str(ith))]['Codes'].values[0]
+                        pr = ldr.GetPrice(start, end, sc_idx, item='adjprice',colname='code')
+                        #print('shape of origin pr : ',pr.shape)
+                        pr = pr.dropna(axis=1, how='any')
+                        #print('shape of non-nan pr : ',pr.shape)
+                        mean_er = GetExpectedReturn_v2(pr,True).T.mean()
+                        c = ['b','g','r'][ith-1]
+                        plt.plot(list(mean_er.index), mean_er.values, color=c, linestyle='--', label=sc_key+'-'+str(ith))
+                
+                plt.legend(loc='upper left')
+                plt.grid(True)
+                plt.show()
+                        
+    return True
+
+def AnnualSectorDist_v4(sc_df_ls, initial=True):
+    """sc_df_ls = [sc2016,sc2017,sc2018,sc2019]"""
+    rst = pd.DataFrame(columns=['Date','Funda','Pattern','C31-Best','C31-Count','C32-Best','C32-Count','C33-Best','C33-Count'])
+    year = 2016
+    for df in sc_df_ls:
+        if year == 2019 :
+            start = str(year+1)+'-03-31'
+            end = str(year+1)+'-12-31'
+        else :
+            start = str(year+1)+'-03-31'
+            end = str(year+2)+'-02-28'
+        for sc in ['반도체 제조업']:#list(set(df.index)):
+            for fd in ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']:
+                tmp = pd.DataFrame(index=[sc],columns=['Date','Funda','Pattern','C31-Best','C31-Count','C32-Best','C32-Count','C33-Best','C33-Count'])
+                ger_total = pd.DataFrame()
+                mer_total = pd.DataFrame()
+                positives = []
+                for ith in ['1','2','3']:
+                    sc_idx = df[df['FD-Q'].isin([fd+'-'+ith])]['Codes'].values[0]
+                    pr = ldr.GetPrice(start, end, sc_idx, item='adjprice',colname='code')
+                    pr = pr.dropna(axis=1,how='any')
+                    er = GetExpectedReturn_v2(pr,initial) +1
+                    gm_pr = pd.DataFrame(np.exp(np.log(er.prod(axis=1))/er.notna().sum(1)),columns=[fd+'-'+ith])
+                    am_pr = pd.DataFrame(er.T.mean(), columns=[fd+'-'+ith])
+                    ger_total = pd.concat([ger_total, gm_pr],axis=1).dropna(axis=0,how='any')
+                    mer_total = pd.concat([mer_total, am_pr],axis=1).dropna(axis=0,how='any')
+                    positives.append(len(gm_pr[lambda x : x[fd+'-'+ith]>=1]))
+                a = b = c = 0
+                for d in list(ger_total.index):
+                    idx = ger_total.loc[d].idxmax()
+                    if idx == fd+'-1': a+=1
+                    elif idx == fd+'-2' : b+=1
+                    elif idx == fd+'-3' : c+=1
+                    else : raise ValueError("Can't be !!!")
+                var = {a:'1', b:'2', c:'3'}
+                tmp.loc[sc,'C31-Best'] = var.get(max(var))
+                tmp.loc[sc,'C31-Count'] = [a,b,c]
+                x = y = z = 0
+                for d in list(mer_total.index):
+                    idx = mer_total.loc[d].idxmax()
+                    if idx == fd+'-1': x+=1
+                    elif idx == fd+'-2' : y+=1
+                    elif idx == fd+'-3' : z+=1
+                    else : raise ValueError("Can't be !!!")
+                var2 = {x:'1', y:'2', z:'3'}
+                tmp.loc[sc,'C32-Best'] = var2.get(max(var2))
+                var3 = {positives[0]:'1', positives[1]:'2', positives[2]:'3'}
+                tmp.loc[sc,'C33-Best'] = var3.get(max(var3))
+                tmp.loc[sc,'C33-Count'] = positives
+                tmp.loc[sc,'C32-Count'] = [x,y,z]
+                tmp.loc[sc,'Date'] = str(year)+'-12'
+                tmp.loc[sc,'Funda'] = fd
+                if tmp.loc[sc,'C31-Best'] == tmp.loc[sc,'C32-Best']:
+                    tmp.loc[sc,'Pattern'] = 'Y'
+                else :
+                    tmp.loc[sc,'Pattern'] = 'N'
+                rst = pd.concat([rst,tmp])
+        year += 1
+    return rst
