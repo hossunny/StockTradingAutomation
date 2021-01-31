@@ -548,3 +548,67 @@ def AnnualSectorDist_v4(sc_df_ls, initial=True):
                 rst = pd.concat([rst,tmp])
         year += 1
     return rst
+
+
+def FinalFundaER(dfs, sc_df):
+    #dfs = [sc2016, sc2017, sc2018, sc2019]
+    sc_ls = list(set(sc_df.index))
+    year = 2016
+    total = pd.DataFrame()
+    for df in dfs :
+        start = str(year+1)+'-03-31'
+        if year != 2019:
+            end = str(year+2)+'-02-28'
+        else :
+            end = '2020-12-31'
+        for sc in ['반도체 제조업']: #sc_ls:
+            for fd in ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']:
+                tmp = pd.DataFrame(index=[sc], columns=['Date','Funda','C31-Best','C31-Count'])
+                sc_idx1 = df[(df.index.isin([sc]))&(df['FD-Q'].isin([fd+'-1']))].Codes.values[0]
+                sc_idx2 = df[(df.index.isin([sc]))&(df['FD-Q'].isin([fd+'-2']))].Codes.values[0]
+                sc_idx3 = df[(df.index.isin([sc]))&(df['FD-Q'].isin([fd+'-3']))].Codes.values[0]
+                pr1 = ldr.GetPrice(start, end, sc_idx1, item='adjprice',colname='code')
+                pr1 = pr1.dropna(axis=1, how='all')
+                pr1 = pr1.fillna(method='ffill').fillna(method='bfill')
+                mean_er1 = GetExpectedReturn_v2(pr1,True).T.mean()
+                pr2 = ldr.GetPrice(start, end, sc_idx2, item='adjprice',colname='code')
+                pr2 = pr2.dropna(axis=1, how='all')
+                pr2 = pr2.fillna(method='ffill').fillna(method='bfill')
+                mean_er2 = GetExpectedReturn_v2(pr2,True).T.mean()
+                pr3 = ldr.GetPrice(start, end, sc_idx3, item='adjprice',colname='code')
+                pr3 = pr3.dropna(axis=1, how='all')
+                pr3 = pr3.fillna(method='ffill').fillna(method='bfill')
+                mean_er3 = GetExpectedReturn_v2(pr3,True).T.mean()
+                t1 = pd.DataFrame(mean_er1, columns=['Q1'])
+                t2 = pd.DataFrame(mean_er2, columns=['Q2'])
+                t3 = pd.DataFrame(mean_er3, columns=['Q3'])
+                tt = pd.concat([t1,t2,t3],axis=1)
+             
+                
+                a = b = c = 0
+                for d in list(tt.index):
+                    idx = tt.loc[d].idxmax()
+                    if idx == 'Q1': a+=1
+                    elif idx == 'Q2' : b+=1
+                    elif idx == 'Q3' : c+=1
+                    else : 
+                        raise ValueError("Can't be !!!")
+                var = {a:'1', b:'2', c:'3'}
+                
+                plt.figure(figsize=(16,12))
+                plt.title("FD : {} & year : {} & Best : {}".format(fd, year, var.get(max(var))))
+                plt.plot(tt.index, t1['Q1'], label='Q1')
+                plt.plot(tt.index, t2['Q2'], label='Q2')
+                plt.plot(tt.index, t3['Q3'], label='Q3')
+                plt.legend(loc='upper left')
+                plt.grid(True)
+                plt.show()
+                
+                tmp.loc[sc,'Date'] = str(year)+'-12'
+                tmp.loc[sc,'Funda'] = fd
+                tmp.loc[sc,'C31-Best'] = var.get(max(var))
+                tmp.loc[sc,'C31-Count'] = [a,b,c]
+                total = pd.concat([total, tmp])
+                
+        year += 1
+    return total
