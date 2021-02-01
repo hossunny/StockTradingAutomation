@@ -629,36 +629,23 @@ def FundaSignal(FP):
                 rst = pd.concat([rst, tmp])
     return rst
 
-def find_cointegrated_pairs(data):
-    n = data.shape[1]
-    score_matrix = np.zeros((n, n))
-    pvalue_matrix = np.ones((n, n))
-    keys = data.keys()
-    pairs = []
-    for i in range(n):
-        for j in range(i+1, n):
-            S1 = data[keys[i]]
-            S2 = data[keys[j]]
-            result = coint(S1, S2)
-            score = result[0]
-            pvalue = result[1]
-            score_matrix[i, j] = score
-            pvalue_matrix[i, j] = pvalue
-            if pvalue < 0.02:
-                pairs.append((keys[i], keys[j]))
-    return score_matrix, pvalue_matrix, pairs
-"""
-# Heatmap to show the p-values of the cointegration test
-# between each pair of stocks
-data = test1_ex[['069080', '131370', '203650', '251270','080580', '087600', '208710','011930', '108320', '322000']]
-scores, pvalues, pairs = find_cointegrated_pairs(data)
-import seaborn
-m = [0,0.2,0.4,0.6,0.8,1]
-plt.figure(figsize=(14,10))
-seaborn.heatmap(pvalues, xticklabels=data.columns, 
-                yticklabels=data.columns, cmap='RdYlGn_r', 
-                mask = (pvalues >= 0.98))
-plt.show()
-print(pairs)
-"""
+
+def FindCodesFunda(sc_df, fp_df, intersection=True):
+    total = []
+    all_codes = pd.read_sql("select code from company_info",conn)
+    all_codes = list(all_codes['code'].values)
+    if intersection :
+        for sc in list(fp_df.index):
+            sub_df = fp_df[(fp_df.index.isin([sc]))]
+            default_set = set(all_codes)
+            for idx, row in sub_df.iterrows():
+                default_set = default_set.intersection(set(sc_df[(sc_df.index.isin([idx]))&(sc_df['FD-Q']==row.Funda+'-'+row['C31-Best'])].Codes.values[0]))
+            total += list(default_set)
+            
+    else :
+        for sc in list(fp_df.index):
+            for idx, row in fp_df.iterrows():
+                tmp_ls = sc_df[(sc_df.index.isin([idx]))&(sc_df['FD-Q']==row.Funda+'-'+row['C31-Best'])].Codes.values[0]
+                total += tmp_ls
+    return list(set(total))
 
