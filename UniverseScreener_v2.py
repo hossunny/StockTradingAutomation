@@ -612,3 +612,53 @@ def FinalFundaER(dfs, sc_df):
                 
         year += 1
     return total
+
+
+def FundaSignal(FP):
+    sc_ls = list(set(FP.index))
+    date_ls = ['2016-12','2017-12','2018-12','2019-12']
+    fd_ls = list(set(FP['Funda'].values))
+    rst = pd.DataFrame(columns=['Funda','C31-Best'])
+    for sc in sc_ls :
+        for fd in fd_ls :
+            sub_df = FP[(FP.index.isin([sc]))&(FP.Date.isin(date_ls))&(FP.Funda==fd)]
+            if len(sub_df) == len(set(sub_df['C31-Best'].values)):
+                tmp = pd.DataFrame(index=[sc],columns=['Funda','C31-Best'])
+                tmp.loc[sc,'Funda'] = fd
+                tmp.loc[sc,'C31-Best'] = sub_df['C31-Best'].values[-1]
+                rst = pd.concat([rst, tmp])
+    return rst
+
+def find_cointegrated_pairs(data):
+    n = data.shape[1]
+    score_matrix = np.zeros((n, n))
+    pvalue_matrix = np.ones((n, n))
+    keys = data.keys()
+    pairs = []
+    for i in range(n):
+        for j in range(i+1, n):
+            S1 = data[keys[i]]
+            S2 = data[keys[j]]
+            result = coint(S1, S2)
+            score = result[0]
+            pvalue = result[1]
+            score_matrix[i, j] = score
+            pvalue_matrix[i, j] = pvalue
+            if pvalue < 0.02:
+                pairs.append((keys[i], keys[j]))
+    return score_matrix, pvalue_matrix, pairs
+"""
+# Heatmap to show the p-values of the cointegration test
+# between each pair of stocks
+data = test1_ex[['069080', '131370', '203650', '251270','080580', '087600', '208710','011930', '108320', '322000']]
+scores, pvalues, pairs = find_cointegrated_pairs(data)
+import seaborn
+m = [0,0.2,0.4,0.6,0.8,1]
+plt.figure(figsize=(14,10))
+seaborn.heatmap(pvalues, xticklabels=data.columns, 
+                yticklabels=data.columns, cmap='RdYlGn_r', 
+                mask = (pvalues >= 0.98))
+plt.show()
+print(pairs)
+"""
+
