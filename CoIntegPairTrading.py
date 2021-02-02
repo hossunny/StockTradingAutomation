@@ -269,7 +269,7 @@ def Labeling(df, qtl=5):
         rst[c] = pd.qcut(df[c],qtl).map(tmp_dict)
     return rst
 
-def counting(sub_df):
+def counting(sub_df, plimit=0.9):
     ls_ls = list(sub_df['C31-Count'].values)
     q1 = q2 = q3 = 0
     for ls in ls_ls :
@@ -280,22 +280,111 @@ def counting(sub_df):
     q22 = q2 / (q1+q2+q3)
     q33 = q3 / (q1+q2+q3)
     rst = 'None'
-    if q11+q22 >= 0.8 :
-        rst = ['Q1','Q2']
-    elif q11+q33 >= 0.8 :
-        rst = ['Q1','Q3']
-    elif q22+q33 >= 0.8 :
-        rst = ['Q2','Q3']
+    if q11+q22 >= plimit :
+        rst = ['1','2']
+    elif q11+q33 >= plimit :
+        rst = ['1','3']
+    elif q22+q33 >= plimit :
+        rst = ['2','3']
     else :
         if q11 >= 0.6 :
-            rst = ['Q1']
+            rst = ['1']
         elif q22 >= 0.6 :
-            rst = ['Q2']
+            rst = ['2']
         elif q33 >= 0.6 :
-            rst = ['Q3']
+            rst = ['3']
         else : pass
     
     return [q1, q2, q3], rst
 
 def zscore(series):
     return (series - series.mean()) / np.std(series)
+
+def Picker_v2(sc='반도체 제조업', cutoff=0.05, doplot=False):
+    """Step0 : Default Setting """
+    print("============== Step0 ================")
+    dates = ['2016-12','2017-12','2018-12','2019-12']
+    conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    sc_ls = list(pd.read_sql("select code, sector from company_info", conn)[lambda x : x['sector']==sc].code.values)
+    all_pr = ldr.GetPrice('2017-03-31','2020-12-31',sc_ls,'adjprice','code')
+    all_pr.dropna(axis=1, how='all',inplace=True)
+    
+    for dt in dates :
+        year = int(dt[:4])
+        start = str(year+1)+'-03-31'
+        if year != 2019:
+            end = str(year+2)+'-02-28'
+        else :
+            end = '2020-12-31'
+        
+        pr = all_pr[(all_pr.index>=start)&(all_pr.index<=end)]
+        #pr = ldr.GetPrice(start, end, sc_ls, 'adjprice', 'code')
+        #pr.dropna(axis=1, how='all',inplace=True)
+    
+        """Step1 : Filtering """
+        print("============== Step1 ================")
+        basic_fltr, _ = FilteringBySector(dt, sc, by=None)
+        basic_fltr = list(set(sc_ls).intersection(set(basic_fltr)))
+    
+    print("Final Basic Filtered number of comps : {}".format(len(basic_fltr)))
+    """Step2 : Non-Stationarity """
+    print("============== Step2 ================")
+    non_stat = []
+    for cd in basic_fltr :
+        try :
+            if Stationarity_Test_Ticker(all_pr[[cd]], cutoff=cutoff):
+                non_stat.append(cd)
+        except :
+            pass
+    if len(non_stat)==0:
+        raise ValueError("None of stocks is non-stationary...")
+    else :
+        print("*Non-Stationarity Filtered number of comps : {}".format(len(non_stat)))
+    
+    rst_total = pd.DataFrame()
+    for dt in dates :
+        year = int(dt[:4])
+        start = str(year+1)+'-03-31'
+        if year != 2019:
+            end = str(year+2)+'-02-28'
+        else :
+            end = '2020-12-31'
+        pr = all_pr[(all_pr.index>=start)&(all_pr.index<=end)]
+        
+        """Step3 : Funda Quantile """
+        print("============== Step3 ================")
+        fn = SummaryFunda(dt,non_stat)
+        print("Funda-existence Filtered number of comps : {}".format(len(fn)))
+        fn_label = Labeling(fn, 3)
+        non_stat = list(set(non_stat).intersection(set(fn_label.index)))
+
+        """Step4 : Funda to Best ER """
+        print("============== Step4 ================")
+        rst_init_Y = AnnualSectorDist_v5(fn_label, pr, dt, sc, initial=True, doplot=doplot)
+        rst_total = pd.concat([rst_total, rst_init_Y])
+        #rst_init_N = AnnualSectorDist_v5(fn_label, pr, dt, sc, initial=False)
+
+    """Step5 : CoInteg Pairs """
+    print("============== Step5 ================")
+    _,_, pairs = Cointegrated_Pairs(pr[non_stat].dropna(axis=1,how='any'),cutoff=cutoff) #빼야하나..
+    
+    return rst_total, pairs, fn, fn_label.astype(str), non_stat
+
+def FundaPriority(fd_pattern, last_label, plimit):
+    given_ls = []
+    for fd in list(last_label.columns):
+        tmp = counting(fd_pattern[lambda x : x['Funda']==fd], plimit=plimit)[1]
+        if tmp != 'None':
+            given_ls.append(tmp)
+        else :
+            given_ls.append(['-1'])
+    assert last_label.shape[1] == len(given_ls)
+    rst = {}
+    for idx, row in last_label.iterrows():
+        cnt=0
+        for i in range(len(given_ls)):
+            if str(row[i]) in given_ls[i]:
+                cnt+=1
+        rst[idx] = cnt
+    return rst
+
