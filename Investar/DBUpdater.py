@@ -9,7 +9,7 @@ class DBUpdater:
     def __init__(self):
         """생성자: MariaDB 연결 및 종목코드 딕셔너리 생성"""
         self.conn = pymysql.connect(host='localhost', user='root',
-            password='tlqkfdk2', db='INVESTAR', charset='utf8')
+            password='******', db='INVESTAR', charset='utf8')
         
         with self.conn.cursor() as curs:
             sql = """

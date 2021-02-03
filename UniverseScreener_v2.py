@@ -28,7 +28,7 @@ from scipy import stats
 
 
 def SectorFundaC1(dt, fltr_by = None):
-    conn = pymysql.connect(host='localhost',user='root',password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    conn = pymysql.connect(host='localhost',user='root',password='******',db='INVESTAR',charset='utf8')
     ftrd_ls, sector_dict = FilteringCondition(dt, eqty=0.1, volm=0.1, sctr=5, by=fltr_by)
     cn = conn.cursor()
     cn.execute("select max(date) from daily_price where code='005930'")
@@ -113,7 +113,7 @@ def SummaryFunda_v2(dt, funda_ls=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE
     #rst1 = SummaryDataFrame('2016-12','2018-02-15',term=10,funda_ls=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액'])
     with open("./TradingDates.pickle","rb") as fr :
         td_days = pickle.load(fr)
-    conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    conn = pymysql.connect(host='localhost',user='root', password='******',db='INVESTAR',charset='utf8')
     comp_info = pd.read_sql("select code, sector from company_info",conn)
     code_ls = list(comp_info.code.values)
     #filtered_ls = Filtering(dt, conn, by=['PBR','PCR','POR'])
@@ -145,7 +145,7 @@ def Labeling(df, qtl=5):
 
 
 def SectorAnalysis(dt):
-    conn = pymysql.connect(host='localhost',user='root',password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    conn = pymysql.connect(host='localhost',user='root',password='******',db='INVESTAR',charset='utf8')
     comp_info = pd.read_sql("select code, sector from company_info",conn)
     code_ls = list(comp_info.code.values)
     sector_dict = {}

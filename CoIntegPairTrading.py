@@ -191,7 +191,7 @@ def SummaryFunda(dt, codes, funda_ls=['PBR','PCR','POR','PSR','PER','EPS','BPS',
     #rst1 = SummaryDataFrame('2016-12','2018-02-15',term=10,funda_ls=['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액'])
     with open("./TradingDates.pickle","rb") as fr :
         td_days = pickle.load(fr)
-    conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    conn = pymysql.connect(host='localhost',user='root', password='******',db='INVESTAR',charset='utf8')
     
     #filtered_ls = Filtering(dt, conn, by=['PBR','PCR','POR'])
     #print("Initial Filtered Univ : {}".format(len(filtered_ls)))
@@ -219,7 +219,7 @@ def Picker_v1(dt='2019-12', sc='반도체 제조업',doplot=False):
         end = str(year+2)+'-02-28'
     else :
         end = '2020-12-31'
-    conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    conn = pymysql.connect(host='localhost',user='root', password='******',db='INVESTAR',charset='utf8')
     sc_ls = list(pd.read_sql("select code, sector from company_info", conn)[lambda x : x['sector']==sc].code.values)
     pr = ldr.GetPrice(start, end, sc_ls, 'adjprice', 'code')
     pr.dropna(axis=1, how='all',inplace=True)
@@ -304,7 +304,7 @@ def Picker_v2(sc='반도체 제조업', cutoff=0.05, doplot=False):
     """Step0 : Default Setting """
     print("============== Step0 ================")
     dates = ['2016-12','2017-12','2018-12','2019-12']
-    conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    conn = pymysql.connect(host='localhost',user='root', password='******',db='INVESTAR',charset='utf8')
     sc_ls = list(pd.read_sql("select code, sector from company_info", conn)[lambda x : x['sector']==sc].code.values)
     all_pr = ldr.GetPrice('2017-03-31','2020-12-31',sc_ls,'adjprice','code')
     all_pr.dropna(axis=1, how='all',inplace=True)

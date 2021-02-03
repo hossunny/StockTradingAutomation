@@ -29,7 +29,7 @@ class BSCrawler:
         self.update_date = datetime.today().strftime('%Y-%m-%d')
         #self.update_date = '2021-01-11'
         self.conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='******',db='INVESTAR',charset='utf8')
         self.logger = logging.getLogger()
         self.logger.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

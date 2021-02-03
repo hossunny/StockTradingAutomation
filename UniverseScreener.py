@@ -29,7 +29,7 @@ class UniverseScreener:
 
     def __init__(self):
         self.conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='******',db='INVESTAR',charset='utf8')
         with self.conn.cursor() as curs:
             sql_load = """
             SELECT CODE, COMPANY FROM COMPANY_INFO
@@ -655,7 +655,7 @@ class UniverseScreener:
         """Paradox of Simpson"""
         with open("./TradingDates.pickle","rb") as fr :
             td_days = pickle.load(fr)
-        conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        conn = pymysql.connect(host='localhost',user='root', password='******',db='INVESTAR',charset='utf8')
         cn = conn.cursor()
         cn.execute("select max(date) from daily_price where code='005930'")
         last_update = cn.fetchone()[0].strftime("%Y-%m-%d")
@@ -754,7 +754,7 @@ class UniverseScreener:
 
 
     def FundaUniv(dt, funda_ls=['PBR','PCR']):
-        conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        conn = pymysql.connect(host='localhost',user='root', password='******',db='INVESTAR',charset='utf8')
         filtered_ls = Filtering(dt, conn, by=['PBR','PCR','POR'])
         total = MultipleSubset(dt, filtered_ls, conn, cut=5)
         total.dropna(axis=0, how='any', inplace=True)
@@ -781,7 +781,7 @@ class UniverseScreener:
         """Paradox of Simpson"""
         with open("./TradingDates.pickle","rb") as fr :
             td_days = pickle.load(fr)
-        conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        conn = pymysql.connect(host='localhost',user='root', password='******',db='INVESTAR',charset='utf8')
         cn = conn.cursor()
         cn.execute("select max(date) from daily_price where code='005930'")
         last_update = cn.fetchone()[0].strftime("%Y-%m-%d")
@@ -831,7 +831,7 @@ class UniverseScreener:
         return df.corr()
 
     def SectorFundaPrice(dt, fltr_by = None):
-        conn = pymysql.connect(host='localhost',user='root',password='tlqkfdk2',db='INVESTAR',charset='utf8')
+        conn = pymysql.connect(host='localhost',user='root',password='******',db='INVESTAR',charset='utf8')
         ftrd_ls, sector_dict = FilteringCondition(dt, eqty=0.1, volm=0.1, sctr=5, by=fltr_by)
         cn = conn.cursor()
         cn.execute("select max(date) from daily_price where code='005930'")
