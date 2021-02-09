@@ -223,3 +223,24 @@ for fp in files :
                     print(e)
                     errs.append(fp+'|'+dt+'|'+str(itm))
 """
+
+def MoreBStoDB(df, conn):
+    errs = []
+    cr = conn.cursor()
+    for idx, row in df.iterrows():
+        try :
+            cd = row.code
+            dt = row.date
+            it = row.itm
+            tp = row.type
+            val = row.value
+            if len(pd.read_sql(f"select * from finance_info_copy where code='{cd}' and date='{dt}' and itm='{it}' and type='Y'",conn))==0:
+                qry = f"insert into finance_info_copy values('{cd}','{dt}','{it}','{tp}','{val}')"
+                cr.execute(qry)
+                conn.commit()
+            print('-->',end=' ')
+        except Exception as e:
+            print(e)
+            errs.append(cd+'|'+str(idx))
+    return errs
+
