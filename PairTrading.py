@@ -70,7 +70,7 @@ def PartialCorrelation_v2(df, x,y,kospi):
 
 
 
-def PairTrading(pr, start, end, ksp,cutoff=0.05):
+def PairTrading_v2(pr, start, end, cutoff=0.05):
     """ 0) Log PR """
     pr = pr.astype(float)
     pr = pr[(pr.index>=start)&(pr.index<=end)]
@@ -82,32 +82,29 @@ def PairTrading(pr, start, end, ksp,cutoff=0.05):
     print("Validation w.r.t Correlation : {}".format(len(cor_rst)))
     
     """ 2) Partial Correlation """
-    #ksp 임시로..!##################
-    #ksp = pd.read_csv("./FullCache/KOSPI_close.csv")
-    #ksp = ksp[(ksp.index>=start)&(ksp.index<=end)]
+    ksp = pd.read_hdf("./FullCache/KOSPI_close.h5")
+    ksp = ksp[(ksp.index>=start)&(ksp.index<=end)]
     pcor_rst = pd.DataFrame(columns = ['A','B','corr','pcorr'])
     for idx in range(len(cor_rst)):
         a = cor_rst.loc[idx, 'A']
         b = cor_rst.loc[idx, 'B']
         pcor, ppvalue = PartialCorrelation_v2(log_pr, a, b, ksp)
-        tmp = pd.DataFrame(columns = ['A','B','corr','pcorr'])
         if ppvalue <= cutoff :
-            tmp.loc[0,'A'] = a
-            tmp.loc[0,'B'] = b
-            tmp.loc[0,'corr'] = cor_rst.loc[idx,'corr']
-            tmp.loc[0,'pcorr'] = pcor
-            pcor_rst = pd.concat([pcor_rst, tmp])
+            pcor_rst.loc[idx,'A'] = a
+            pcor_rst.loc[idx,'B'] = b
+            pcor_rst.loc[idx,'corr'] = cor_rst.loc[idx,'corr']
+            pcor_rst.loc[idx,'pcorr'] = pcor
+    pcor_rst.reset_index(drop=True,inplace=True)
     print("Validation w.r.t Partial-Correlation by KOSPI : {}".format(len(pcor_rst)))
-    
-    #위 코드도 밑에처럼 loc추가로 바꾸자
-    
+        
     """ 3) CoIntegration """
     # Curious about negative cointeg coeff
     cointeg_rst = pd.DataFrame(columns = ['A','B','corr','pcorr','cointeg'])
     for idx in range(len(pcor_rst)):
         a = pcor_rst.loc[idx,'A']
         b = pcor_rst.loc[idx,'B']
-        tmp_coeff, tmp_pvalue = coint(log_pr[a], log_pr[b])
+        coint_result = coint(log_pr[a], log_pr[b])
+        tmp_coeff, tmp_pvalue = coint_result[0], coint_result[1]
         if tmp_pvalue <= cutoff :
             min_pvalue = tmp_pvalue
             best_coeff = tmp_coeff
@@ -116,7 +113,7 @@ def PairTrading(pr, start, end, ksp,cutoff=0.05):
             best_coeff = -999.9
         
         for eta in [0.1*i for i in range(1,41)]:
-            spread = a - b * eta
+            spread = log_pr[a] - log_pr[b] * eta
             adfuller_rst = adfuller(spread)
             if adfuller_rst[1] <= cutoff:
                 if adfuller_rst[1] < min_pvalue:
@@ -131,5 +128,6 @@ def PairTrading(pr, start, end, ksp,cutoff=0.05):
             cointeg_rst.loc[idx,'pcorr'] = pcor_rst.loc[idx,'pcorr']
             cointeg_rst.loc[idx,'cointeg'] = best_coeff
     cointeg_rst.reset_index(drop=True, inplace=True)
+    print("Validation w.r.t CoIntegration : {}".format(len(cointeg_rst)))
     
     return cointeg_rst
