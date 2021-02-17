@@ -121,7 +121,49 @@ def Filtering(dt, sc_codes, by=None):
                 raise ValueError("Can't be !!")
         return list(set(code_ls).intersection(sc_codes))
 
-def PairTrading_v3(pr, start, end, cutoff=0.05):
+def SameSector(rst, comp):
+    yes_idx = []
+    for idx, row in rst.iterrows():
+        try :
+            a = row.A
+            b = row.B
+            a_sc = comp[comp.code==a]['sector'].values[0]
+            b_sc = comp[comp.code==b]['sector'].values[0]
+            if a_sc == b_sc :
+                yes_idx.append(idx)
+        except :
+            pass
+    return rst[rst.index.isin(yes_idx)]
+
+def ExpectedEarning(a, b, eta, pr):
+    pr = pr[[a,b]]
+    log_pr = np.log(pr)
+    spread = log_pr[a] - log_pr[b] * eta
+    spread_df = pd.DataFrame(spread, columns=['spread'])
+    invade = spread.mean() - 1*spread.std()
+    invade_idx = list(spread_df[lambda x : x['spread'] <= invade].index)
+    equib = spread.mean()
+    equib_idx = list(spread_df[lambda x : x['spread'] >= equib].index)
+    
+    trade_idx = []
+    flagInvade = True
+    for idx, row in spread_df.iterrows():
+        if flagInvade and row.spread <= invade :
+            trade_idx.append(idx)
+            flagInvade = False
+        elif not flagInvade and row.spread >= equib :
+            trade_idx.append(idx)
+            flagInvade = True
+    
+    earnings = spread_df[spread_df.index.isin(trade_idx)].diff(1)
+    earnings = earnings.iloc[[i*2+1 for i in range(0,int(len(earnings)/2))],:]
+    trade_num = len(earnings)
+    earnings = earnings.sum()[0]
+            
+    return earnings, trade_num
+
+
+def PairTrading_v4(pr, start, end, cutoff=0.05, fltr=True):
     """ 0) Log PR """
     pr = pr.astype(float)
     pr = pr[(pr.index>=start)&(pr.index<=end)]
@@ -138,13 +180,14 @@ def PairTrading_v3(pr, start, end, cutoff=0.05):
     log_pr.drop(drop_ls, axis=1, inplace=True)
     
     """ * Filtering """
-    dt = str(int(start[:4])-1)+'-12'
-    fltrd_ls = Filtering(dt, list(log_pr.columns), by=None)
-    log_pr = log_pr[fltrd_ls]
-    print("Filtered by Equity & Volume -> now : {}".format(len(fltrd_ls)))
+    if fltr :
+        dt = str(int(start[:4])-1)+'-12'
+        fltrd_ls = Filtering(dt, list(log_pr.columns), by=None)
+        log_pr = log_pr[fltrd_ls]
+        print("Filtered by Equity & Volume -> now : {}".format(len(fltrd_ls)))
     
     """ 1) Correlation """
-    cor_rst = Correlation_v2(log_pr, cutoff)
+    cor_rst = Correlation_v3(log_pr, cutoff)
     print("Validation w.r.t Correlation : {}".format(len(cor_rst)))
     
     """ 2) Partial Correlation """
@@ -196,6 +239,7 @@ def PairTrading_v3(pr, start, end, cutoff=0.05):
             cointeg_rst.loc[idx,'cointeg'] = best_coeff
     cointeg_rst.reset_index(drop=True, inplace=True)
     print("Validation w.r.t CoIntegration : {}".format(len(cointeg_rst)))
+    #print(cointeg_rst)
     
     """ 5) Spread Estimation """
     # 6) no need to check trend since we did stationarity trend test
@@ -214,4 +258,22 @@ def PairTrading_v3(pr, start, end, cutoff=0.05):
     pairs = cointeg_rst[cointeg_rst.index.isin(valid_idx)]
     pairs.reset_index(drop=True, inplace=True)
     
-    return pairs
+    """ 9) Risk & 10) Earnings """
+    risk_ls = []
+    earning_ls = []
+    trade_ls = []
+    for idx in range(len(pairs)):
+        a = pairs.loc[idx,'A']
+        b = pairs.loc[idx,'B']
+        coint_coeff = pairs.loc[idx,'cointeg']
+        spread = log_pr[a] - log_pr[b] * coint_coeff
+        risk_ls.append(spread.diff().std())
+        earning, trade_num = ExpectedEarning(a, b, coint_coeff, pr)
+        earning_ls.append(earning*100)
+        trade_ls.append(trade_num)
+    pairs['risk'] = risk_ls
+    pairs['earnings(%)'] = earning_ls
+    pairs['trade#'] = trade_ls
+    
+    
+    return pairs.sort_values(by=['cointeg'],ascending=False)
