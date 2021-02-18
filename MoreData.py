@@ -57,6 +57,22 @@ def GetAllPrice(all_codes):
         print("{} is finished - size : {}".format(y, total.shape))
     return errs
 
+def lv2(df_ls):
+    real_total = pd.DataFrame()
+    for df in df_ls :
+        dates = sorted(list(set(df.DATE.values)))
+        codes = list(set(df.CODE.values))
+        total = pd.DataFrame()
+        for cd in codes :
+            tmp = df[lambda x : x['CODE']==cd].sort_values(by=['DATE'])[['DATE','adjprice']]
+            tmp.index = [dt.strftime("%Y-%m-%d") for dt in tmp.DATE]
+            tmp.drop(['DATE'],axis=1,inplace=True)
+            tmp.columns = [cd]
+            total = pd.concat([total,tmp],axis=1)
+        real_total = pd.concat([real_total,total],axis=0)
+    return real_total
+
+
 """ 
 # Checking whether any item I want is not there or there being different name.
 %%time
