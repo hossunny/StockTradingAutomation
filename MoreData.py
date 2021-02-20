@@ -328,3 +328,61 @@ def FundaPattern():
             tmp.loc[sc,'BestQuantile'] = b_q
             rst = pd.concat([rst,tmp])
     return rst
+
+def FundaPattern_v2(end_dt = '2019-12'):
+    dates = ['2016-12','2017-12','2018-12','2019-12']
+    dts = []
+    for dt in dates:
+        if dt <= end_dt:
+            dts.append(dt)
+    all_funda = pd.DataFrame()
+    for dt in dts :
+        all_funda = pd.concat([all_funda,Funda(dt)])
+    all_sector = list(set(all_funda.index))
+    fundas = list(set(all_funda.Funda.values))
+    rst = pd.DataFrame(columns=['Funda','BestQuantile'])
+    for sc in all_sector :
+        for fd in fundas :
+            b_q = all_funda[(all_funda.index==sc)&(all_funda.Funda==fd)]['Quantile'].value_counts().index[0]
+            tmp = pd.DataFrame(index=[sc], columns=['Funda','BestQuantile'])
+            tmp.loc[sc,'Funda'] = fd
+            tmp.loc[sc,'BestQuantile'] = b_q
+            rst = pd.concat([rst,tmp])
+    return rst
+
+def FundaMatch(dt, byFunda='all'):
+    conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    company = pd.read_sql("select * from company_info", conn)
+    if dt == '2019-12':
+        best_funda = pd.read_hdf("FullCache/BestFundaPattern.h5")
+    else :
+        best_funda = FundaPattern_v2(dt)
+    dt_idx = {'2016-12':0,'2017-12':1,'2018-12':2,'2019-12':3}
+    sectors = list(set(best_funda.index))
+    company = company[company.sector.isin(sectors)]
+    funda_codes = pd.read_pickle("FundaPatternCodes_v2.pickle")[dt_idx[dt]]
+    codes = list(company.code.values)
+    bestfunda_dict = {}
+    for sc in sectors :
+        sub_ls = []
+        for fd in ['PBR','PCR','PER','POR','PSR','EPS','BPS','ROE','ROA','시가총액'] : 
+            sub = best_funda[(best_funda.index==sc)&(best_funda.Funda==fd)]
+            sub_ls.append(sub.loc[sc,'Funda'] + '-' + sub.loc[sc,'BestQuantile'])
+        bestfunda_dict[sc] = sub_ls
+    agg_codes = []
+    for key in bestfunda_dict.keys():
+        for bfd in bestfunda_dict[key]:
+            if byFunda == 'all':
+                agg_codes += funda_codes[(funda_codes.index==key)&(funda_codes['FD-Q']==bfd)].loc[key,'Codes']
+            elif type(byFunda)==list and len(byFunda)!=0:
+                if bfd[:3] in byFunda :
+                    agg_codes += funda_codes[(funda_codes.index==key)&(funda_codes['FD-Q']==bfd)].loc[key,'Codes']
+            else :
+                raise ValueError("byFunda Insertion Error")
+    score_dict = {}
+    for cd in codes :
+        if cd in agg_codes:
+            score_dict[cd] = agg_codes.count(cd)
+        else :
+            score_dict[cd] = 0
+    return score_dict
