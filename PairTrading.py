@@ -1333,3 +1333,159 @@ def PairTrading_v9(pr, start, end, real_start, real_end, byFunda='all', up_cut=0
     pairs['B_Funda(+)'] = FundaScore_B
         
     return pairs, pairs[pairs.index.isin(survive_ls)]
+
+def TradeVisual(A, B, eta, start, end, pr, enter=1):
+    loglv22 = np.log(pr)
+    qq_log = loglv22[(loglv22.index>=start)&(loglv22.index<=end)]
+    qq_full = loglv22[(loglv22.index>=start)]
+    aa = qq_log[A]
+    bb = qq_log[B]
+    aa_full = qq_full[A]
+    bb_full = qq_full[B]
+    etaa = eta
+    spread = aa - bb * etaa
+    spread_full = aa_full - bb_full * etaa
+    fig = plt.figure(figsize=(12,10))
+    ax1 = fig.add_subplot(2, 1, 1)
+    ax2 = fig.add_subplot(2, 1, 2)
+    
+    print("{} & {}".format(ldr.FindNameByCode(A),ldr.FindNameByCode(B)))
+    ax1.plot(spread.reset_index().index, spread.values,color='black')
+    ax1.plot(spread_full.reset_index().index[len(spread):], spread_full.values[len(spread):],color='black')
+
+    ax1.hlines(spread.mean(),0,len(spread_full),colors='r',linewidth=3)
+    ax1.hlines(spread.mean()+enter*spread.std(),0,len(spread_full),colors='y',linewidth=3)
+    ax1.hlines(spread.mean()-enter*spread.std(),0,len(spread_full),colors='y',linewidth=3)
+    ax1.vlines(len(spread),min(spread_full),max(spread_full),colors='g',linewidth=3)
+
+    ax2.plot(spread_full.reset_index().index, (aa_full - aa_full.mean())/aa_full.std(),label='A')
+    ax2.plot(spread_full.reset_index().index, (bb_full - bb_full.mean())/bb_full.std(), label='B')
+    ax2.vlines(len(spread),-4,4,colors='g',linewidth=3)
+    ax2.legend(loc='upper left')
+    plt.show()
+    return True
+
+def BestPairSelector(pair_df,comp):
+    tmp = pair_df.copy()
+    rank_dict = {}
+    for idx in list(tmp.index):
+        rank_dict[idx] = 0
+    tmp['abs_cointeg'] = abs(tmp['cointeg']-1)
+    tmp['best_funda'] = tmp['A_Funda(+)'] + tmp['B_Funda(+)']
+    sector_ls = []
+    for idx, row in tmp.iterrows():
+        a = row.A
+        b = row.B
+        if comp[lambda x : x['code']==a].sector.values[0] == comp[lambda x : x['code']==b].sector.values[0]:
+            sector_ls.append('Y')
+        else :
+            sector_ls.append('N')
+        #sector_ls.append(comp[lambda x : x['code']==a].sector.values[0] + '-' + comp[lambda x : x['code']==b].sector.values[0])
+    tmp['sector'] = sector_ls
+    
+    T = len(pair_df)
+    """ CoInteg Coeff """
+    for ith, idx in enumerate(list(tmp.sort_values(by=['abs_cointeg']).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['corr'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['pcorr'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['dcorr'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['best_funda'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['AvgVol'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['risk'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['A_trade#'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['B_trade#'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['A_maxterm']).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['B_maxterm']).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['A_earnings(%)'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    for ith, idx in enumerate(list(tmp.sort_values(by=['B_earnings(%)'],ascending=False).index)):
+        rank_dict[idx] += T - ith
+    tmp['SCORE'] = tmp.index.map(rank_dict)
+    tmp = tmp.drop(['best_funda','abs_cointeg'],axis=1)
+    tmp = tmp.sort_values(by=['SCORE'],ascending=False).reset_index(drop=True)
+    return tmp
+
+def SpreadDiverge(a, b, eta, check_start, train_pr, test_pr, enter=2, ndays=25):
+    train_pr = train_pr[[a,b]]
+    log_pr = np.log(train_pr)
+    spread = log_pr[a] - log_pr[b] * eta
+    mu = spread.mean()
+    sigma = spread.std()
+    test_pr = test_pr[test_pr.index>=check_start]
+    test_pr = test_pr[[a,b]]
+    test_log_pr = np.log(test_pr)
+    test_spread = test_log_pr[a] - test_log_pr[b] * eta
+    
+    spread_df = pd.DataFrame(test_spread, columns=['spread'])
+    UpCut = mu + enter * sigma
+    DownCut = mu - enter * sigma
+    index_ls = list(spread_df.index)
+    Down_ls = []
+    Up_ls = []
+    for idx, row in spread_df.iterrows():
+        if row.spread < DownCut :
+            Down_ls.append(-1)
+        else :
+            Down_ls.append(+1)
+            
+        if row.spread > UpCut :
+            Up_ls.append(-1)
+        else :
+            Up_ls.append(+1)
+    sub = spread_df.copy()
+    sub['Down'] = Down_ls
+    sub['Up'] = Up_ls
+    max_term = 0
+    new_idx = 0
+    for idx in index_ls:
+        if sub.loc[idx,'Down'] == -1:
+            tmp = sub[sub.index>idx][lambda x : x['Down']==+1]
+            if len(tmp)!= 0:
+                new_idx = tmp.index[0]
+                term = index_ls.index(new_idx) - index_ls.index(idx)
+                if term > max_term :
+                    max_term = term
+            else :
+                new_idx = index_ls[-1]
+                term = index_ls.index(new_idx) - index_ls.index(idx) + 1
+                if term > max_term :
+                    max_term = term
+                break
+    if max_term >= ndays :
+        print("Down Divergence")
+        return True, max_term
+    
+    umax_term = 0
+    new_idx = 0
+    for idx in index_ls:
+        if sub.loc[idx,'Up'] == -1:
+            tmp = sub[sub.index>idx][lambda x : x['Up']==+1]
+            if len(tmp)!= 0:
+                new_idx = tmp.index[0]
+                term = index_ls.index(new_idx) - index_ls.index(idx)
+                if term > umax_term :
+                    umax_term = term
+            else :
+                new_idx = index_ls[-1]
+                term = index_ls.index(new_idx) - index_ls.index(idx) + 1
+                if term > umax_term :
+                    umax_term = term
+                break
+    if umax_term >= ndays :
+        print("Up Divergence")
+        return True, umax_term
+    if max_term < umax_term :
+        max_term = umax_term
+    print("No Divergence")
+    return False, max_term
