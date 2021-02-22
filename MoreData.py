@@ -57,6 +57,43 @@ def GetAllPrice(all_codes):
         print("{} is finished - size : {}".format(y, total.shape))
     return errs
 
+def GetDailyPrice(all_codes):
+    all_codes = all_codes + ['005935','005385','066575']
+    print(len(all_codes))
+    errs = []
+    tmp_pr = pd.read_hdf("FullCache/Price/price_{}.h5".format(str(year)))
+    with open("TradingDates.pickle","rb") as fr:
+        trading_dates = pickle.load(fr)
+    last_update = tmp_pr.index[-1]
+    idx = trading_dates.index(last_update)
+    start_date = trading_dates[idx+1]
+    today = datetime.now().strftime("%Y-%m-%d")
+    year=[today[:4]]
+    for y in year :
+        start = start_date.replace('-','')
+        end = today.replace('-','')
+        total = pd.DataFrame()
+        for cd in all_codes :
+            try :
+                tmp = stock.get_market_ohlcv_by_date(start, end, cd, adjusted=True)
+                if len(tmp) == 0 :
+                    continue
+                else :
+                    tmp.rename(columns={'시가':'OPEN','고가':'high','저가':'low','종가':'adjprice','거래량':'volume'},inplace=True)
+                    tmp.index.names = ['DATE']
+                    tmp.reset_index(inplace=True)
+                    tmp['CODE'] = '{:06d}'.format(int(cd))
+                    tmp['CODE'] = tmp['CODE'].astype(str)
+                    total = pd.concat([total, tmp])
+            except Exception as e:
+                print(e)
+                errs.append(str(y)+'-'+cd)
+        #total.to_csv("./FullCache/Price/price_{}.csv".format(str(y)),index=False)
+        total = pd.concat([tmp_pr,total])
+        total.to_hdf("./FullCache/Price/price_{}.h5".format(str(y)),key='price')
+        print("{} is finished - size : {}".format(y, total.shape))
+    return errs
+
 def lv2(df_ls):
     real_total = pd.DataFrame()
     for df in df_ls :
