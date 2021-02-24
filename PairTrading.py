@@ -1729,3 +1729,15 @@ def PairTrading_v10(pr, start, end, real_start, real_end, byFunda='all', up_cut=
     
         
     return pairs, pairs[pairs.index.isin(survive_ls)]
+
+def PriceCompare(rst, pr, diff=10000, min_pr=8000, max_pr=150000):
+    valid_idx = []
+    for idx, row in rst.iterrows():
+        a = row.A
+        b = row.B
+        a_pr = pr[a].mean()
+        b_pr = pr[b].mean()
+        if a_pr >= min_pr and b_pr >= min_pr and a_pr <= max_pr and b_pr <= max_pr:
+            if abs(a_pr - b_pr) <= diff:
+                valid_idx.append(idx)
+    return rst[rst.index.isin(valid_idx)]

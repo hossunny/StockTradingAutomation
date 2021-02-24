@@ -423,3 +423,137 @@ def FundaMatch(dt, byFunda='all'):
         else :
             score_dict[cd] = 0
     return score_dict
+
+def MedianFundaPatternFull(pr):
+    comp = pd.read_sql("select * from company_info",conn)
+    sectors = list(comp['sector'].value_counts().index)
+    fundas = ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']
+    rst = pd.DataFrame()
+    for dt in ['2016-12','2017-12','2018-12','2019-12']:
+        start = str(int(dt[:4])+1)+'-04-01'
+        end = str(int(dt[:4])+2)+'-03-31'
+        sub_pr = pr[(pr.index>=start)&(pr.index<=end)]
+        total = pd.DataFrame(index=sectors,columns=fundas)
+        for sc in sectors :
+            sc_ls = list(comp[lambda x : x['sector']==sc].code.values)
+            for fd in fundas :
+                try :
+                    tmp_fd = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and itm='{fd}' and code in {tuple(sc_ls)}",conn)
+                    median = tmp_fd.describe().loc['50%','value']
+                    low_ls = list(tmp_fd[lambda x : x['value']<=median].code.values)
+                    high_ls = list(tmp_fd[lambda x : x['value']>median].code.values)
+                    low_er = np.log(sub_pr[low_ls].pct_change()+1).cumsum().iloc[-1].mean()
+                    high_er = np.log(sub_pr[high_ls].pct_change()+1).cumsum().iloc[-1].mean()
+                    if low_er >= high_er:
+                        total.loc[sc,fd] = 'L'
+                    else :
+                        total.loc[sc,fd] = 'H'
+                except :
+                    pass
+        rst = pd.concat([rst,total])
+    final = pd.DataFrame(index=sectors, columns=fundas)
+    for sc in sectors :
+        for fd in fundas :
+            if len(rst.loc[sc][fd].value_counts())==1:
+                final.loc[sc,fd] = rst.loc[sc][fd].values[0]
+    return final
+
+def MedianFundaTestFull(pr, param=True, cutoff=0.05):
+    comp = pd.read_sql("select * from company_info",conn)
+    sectors = list(comp['sector'].value_counts().index)
+    fundas = ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']
+    rst = pd.DataFrame()
+    for dt in ['2016-12','2017-12','2018-12','2019-12']:
+        start = str(int(dt[:4])+1)+'-04-01'
+        end = str(int(dt[:4])+2)+'-03-31'
+        sub_pr = pr[(pr.index>=start)&(pr.index<=end)]
+        total = pd.DataFrame(index=sectors,columns=fundas)
+        for sc in sectors :
+            sc_ls = list(comp[lambda x : x['sector']==sc].code.values)
+            for fd in fundas :
+                try :
+                    tmp_fd = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and itm='{fd}' and code in {tuple(sc_ls)}",conn)
+                    median = tmp_fd.describe().loc['50%','value']
+                    low_ls = list(tmp_fd[lambda x : x['value']<=median].code.values)
+                    high_ls = list(tmp_fd[lambda x : x['value']>median].code.values)
+                    low_array = np.log(sub_pr[low_ls].pct_change()+1).cumsum().iloc[-1]
+                    high_array = np.log(sub_pr[high_ls].pct_change()+1).cumsum().iloc[-1]
+                    if param :
+                        if stats.ttest_ind(low_array, high_array,  equal_var=False)[1] <= cutoff:
+                            pass
+                        else :
+                            continue
+                    else :
+                        if stats.mannwhitneyu(low_array, high_array)[1] <= cutoff:
+                            pass
+                        else :
+                            continue
+                    low_er = low_array.mean()
+                    high_er = high_array.mean()
+                    if low_er >= high_er:
+                        total.loc[sc,fd] = 'L'
+                    else :
+                        total.loc[sc,fd] = 'H'
+                except :
+                    pass
+        rst = pd.concat([rst,total])
+    
+    return rst
+
+def BisectFundaTest(dt,pr,param=True,cutoff=0.05):
+    comp = pd.read_sql("select * from company_info",conn)
+    sectors = list(comp['sector'].value_counts().index)
+    fundas = ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']
+    total = pd.DataFrame(index=sectors,columns=fundas)
+    for sc in sectors :
+        sc_ls = list(comp[lambda x : x['sector']==sc].code.values)
+        for fd in fundas :
+            try :
+                tmp_fd = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and itm='{fd}' and code in {tuple(sc_ls)}",conn)
+                median = tmp_fd.describe().loc['50%','value']
+                low_ls = list(tmp_fd[lambda x : x['value']<=median].code.values)
+                high_ls = list(tmp_fd[lambda x : x['value']>median].code.values)
+                low_array = np.log(pr[low_ls].pct_change()+1).cumsum().iloc[-1]
+                high_array = np.log(pr[high_ls].pct_change()+1).cumsum().iloc[-1]
+                if param :
+                    if stats.ttest_ind(low_array, high_array,  equal_var=False)[1] <= cutoff:
+                        pass
+                    else :
+                        continue
+                else :
+                    if stats.mannwhitneyu(low_array, high_array)[1] <= cutoff:
+                        pass
+                    else :
+                        continue
+                low_er = low_array.mean()
+                high_er = high_array.mean()
+                if low_er >= high_er:
+                    total.loc[sc,fd] = 'L'
+                else :
+                    total.loc[sc,fd] = 'H'
+            except :
+                pass
+    return total
+
+def BisectFundaSimple(dt,pr):
+    comp = pd.read_sql("select * from company_info",conn)
+    sectors = list(comp['sector'].value_counts().index)
+    fundas = ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']
+    total = pd.DataFrame(index=sectors,columns=fundas)
+    for sc in sectors :
+        sc_ls = list(comp[lambda x : x['sector']==sc].code.values)
+        for fd in fundas :
+            try :
+                tmp_fd = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and itm='{fd}' and code in {tuple(sc_ls)}",conn)
+                median = tmp_fd.describe().loc['50%','value']
+                low_ls = list(tmp_fd[lambda x : x['value']<=median].code.values)
+                high_ls = list(tmp_fd[lambda x : x['value']>median].code.values)
+                low_er = np.log(pr[low_ls].pct_change()+1).cumsum().iloc[-1].mean()
+                high_er = np.log(pr[high_ls].pct_change()+1).cumsum().iloc[-1].mean()
+                if low_er >= high_er:
+                    total.loc[sc,fd] = 'L'
+                else :
+                    total.loc[sc,fd] = 'H'
+            except :
+                pass
+    return total
