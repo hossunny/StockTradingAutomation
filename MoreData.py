@@ -500,6 +500,52 @@ def MedianFundaTestFull(pr, param=True, cutoff=0.05):
     
     return rst
 
+def MedianFundaTestFull_v2(pr, param=True, cutoff=0.05):
+    comp = pd.read_sql("select * from company_info",conn)
+    sectors = list(comp['sector'].value_counts().index)
+    fundas = ['PBR','PCR','POR','PSR','PER','EPS','BPS','ROE','ROA','시가총액']
+    median_df = pd.DataFrame(index=sectors,columns=fundas)
+    rst = pd.DataFrame()
+    for dt in ['2016-12','2017-12','2018-12','2019-12']:
+        start = str(int(dt[:4])+1)+'-04-01'
+        end = str(int(dt[:4])+2)+'-03-31'
+        sub_pr = pr[(pr.index>=start)&(pr.index<=end)]
+        total = pd.DataFrame(index=sectors,columns=fundas)
+        for sc in sectors :
+            sc_ls = list(comp[lambda x : x['sector']==sc].code.values)
+            for fd in fundas :
+                try :
+                    tmp_fd = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and itm='{fd}' and code in {tuple(sc_ls)}",conn)
+                    median = tmp_fd.describe().loc['50%','value']
+                    low_ls = list(tmp_fd[lambda x : x['value']<=median].code.values)
+                    high_ls = list(tmp_fd[lambda x : x['value']>median].code.values)
+                    low_array = np.log(sub_pr[low_ls].pct_change()+1).cumsum().iloc[-1]
+                    high_array = np.log(sub_pr[high_ls].pct_change()+1).cumsum().iloc[-1]
+                    if param :
+                        if stats.ttest_ind(low_array, high_array,  equal_var=False)[1] <= cutoff:
+                            pass
+                        else :
+                            continue
+                    else :
+                        if stats.mannwhitneyu(low_array, high_array)[1] <= cutoff:
+                            pass
+                        else :
+                            continue
+                    low_er = low_array.mean()
+                    high_er = high_array.mean()
+                    if low_er >= high_er:
+                        total.loc[sc,fd] = 'L'
+                    else :
+                        total.loc[sc,fd] = 'H'
+                        
+                    if dt=='2019-12':
+                        median_df.loc[sc,fd] = median
+                except :
+                    pass
+        rst = pd.concat([rst,total])
+    
+    return rst, median_df
+
 def BisectFundaTest(dt,pr,param=True,cutoff=0.05):
     comp = pd.read_sql("select * from company_info",conn)
     sectors = list(comp['sector'].value_counts().index)
@@ -557,3 +603,33 @@ def BisectFundaSimple(dt,pr):
             except :
                 pass
     return total
+
+def SectorNThemaCodeGen(url):
+    code_raw = pd.read_html(url,encoding='cp949')[2]['종목명'].dropna(axis=0).values
+    code_raw = [e.replace(' *','') for e in code_raw]
+    code = []
+    for e in code_raw:
+        try :
+            code.append(ldr.FindCodeByName(e))
+        except :
+            pass
+    return code
+
+# total_dict = {}
+# total_dict['제약'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=upjong&no=35')
+# total_dict['반도체'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=upjong&no=202')
+# total_dict['디스플레이'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=upjong&no=199')
+# total_dict['IT'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=upjong&no=154')
+# total_dict['코로나'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=436')
+# total_dict['유전자'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=376')
+# total_dict['2차전지'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=64')
+# total_dict['클라우드'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=276')
+# total_dict['쿠팡'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=474')
+# total_dict['증강현실'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=289')
+# total_dict['자율주행차'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=362')
+# total_dict['4차산업'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=375')
+# total_dict['음성인식'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=302')
+# total_dict['인터넷은행'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=343')
+# total_dict['게임'] = list(set(set(SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=265')).union(set(SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=42')))))
+# total_dict['전자결제'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=272')
+# total_dict['5G'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=373')

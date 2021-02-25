@@ -649,3 +649,39 @@ def FindCodesFunda(sc_df, fp_df, intersection=True):
                 total += tmp_ls
     return list(set(total))
 
+def UniverseFilter(dt):
+    conn = pymysql.connect(host='localhost',user='root',
+                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
+    start_year = str(1+int(dt[:4]))
+    start_date = start_year + '-04-01'
+    end_year = str(2+int(dt[:4]))
+    end_date = end_year + '03-31'
+    """ 1) Volume over MEDIAN """
+    try :
+        pr = pd.read_hdf("./FullCache/Price/price_{}.h5".format(end_year))
+    except :
+        pr = pd.read_hdf("./FullCache/Price/price_{}.h5".format(start_year))
+    vol_last60 = pr[pr.DATE.isin(sorted(list(set(pr.DATE.values)))[-60:])].groupby('CODE').mean()
+    vol_median = vol_last60[['volume']].describe().loc['50%','volume']
+    vol_ls = list(vol_last60[lambda x : x['volume']>=vol_median].index)
+    
+    """ 2) MarketCap over MEDIAN """
+    mcp = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and itm='시가총액'",conn)
+    mcp_median = mcp.describe().loc['50%','value']
+    mcp_ls = list(mcp[lambda x : x['value']>=mcp_median].code.values)
+    
+    profit = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and type='Y' and itm='당기순이익'",conn)
+    profit_ls = list(profit[lambda x : x['value']>0].code.values)
+    pbr = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and type='Y' and itm='PBR' and code in {tuple(profit_ls)}",conn)
+    pbr_ls = list(pbr[lambda x : x['value']>0].code.values)
+    pcr = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and type='Y' and itm='PCR' and code in {tuple(pbr_ls)}",conn)
+    pcr_ls = list(pcr[lambda x : x['value']>0].code.values)
+    por = pd.read_sql(f"select * from finance_info_copy where date='{dt}' and type='Y' and itm='POR' and code in {tuple(pcr_ls)}",conn)
+    por_ls = list(por[lambda x : x['value']>0].code.values)
+    
+    set1 = set(set(vol_ls).union(set(mcp_ls)))
+    set2 = set(por_ls)
+    total_ls = list(set1.intersection(set2))
+    print("Our Universe : {}".format(len(total_ls)))
+    return total_ls
