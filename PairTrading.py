@@ -1778,3 +1778,229 @@ def UniverseFilter(dt):
     total_ls = list(set1.intersection(set2))
     print("Our Universe : {}".format(len(total_ls)))
     return total_ls
+
+def PairTrading_v11(pr, start, end, real_start, real_end, byFunda='all', up_cut=0.3, down_cut=-0.20, cutoff=0.05, fltr=True, enter=1, ndays=22):
+    print("Initial number of companies : {}".format(len(pr.columns)))
+    """ 0) Log PR """
+    pr = pr.astype(float)
+    real_pr = pr[(pr.index>=real_start)&(pr.index<=real_end)]
+    real_pr.dropna(axis=1,how='any')
+    log_real_pr = np.log(real_pr)
+    pr = pr[(pr.index>=start)&(pr.index<=end)]
+    pr = pr.dropna(axis=1,how='any')
+    log_pr = np.log(pr)
+    
+    drop_ls = []
+    for cd in log_pr.columns:
+        if len(log_pr[cd].value_counts())==1:
+            drop_ls.append(cd)
+        elif log_pr[cd].value_counts().iloc[:2].sum() >= len(log_pr[cd]) * 0.3 :
+            drop_ls.append(cd)
+    print("Almost no change in price in this period -> removed : {}".format(len(drop_ls)))
+    log_pr.drop(drop_ls, axis=1, inplace=True)
+    pr.drop(drop_ls, axis=1, inplace=True)
+    
+#     """ * Stop & Loss Cut"""
+#     pr_rt = pr.pct_change()
+#     out_ls = []
+#     for cd in pr_rt.columns:
+#         if len(pr_rt[lambda x : x[cd] < down_cut]) >= 1 : # 1번이라도 나오면 없애야 하나?
+#             out_ls.append(cd)
+#     log_pr.drop(out_ls, axis=1, inplace=True)
+#     pr.drop(out_ls, axis=1, inplace=True)
+#     print("Excluding stop-loss condition with {} : -> now : {}".format(down_cut, len(pr.columns)))
+    
+    
+    """ 1) Correlation """
+    cor_rst = Correlation_v3(log_pr, cutoff)
+    print("Validation w.r.t Correlation : {}".format(len(cor_rst)))
+    
+    """ 2) Partial Correlation """
+    ksp = pd.read_hdf("./FullCache/KOSPI_close.h5")
+    ksp = ksp[(ksp.index>=start)&(ksp.index<=end)]
+    pcor_rst = pd.DataFrame(columns = ['A','B','corr','pcorr'])
+    for idx in range(len(cor_rst)):
+        a = cor_rst.loc[idx, 'A']
+        b = cor_rst.loc[idx, 'B']
+        pcor, ppvalue = PartialCorrelation_v2(log_pr, a, b, ksp)
+
+        if ppvalue <= cutoff and pcor>=0:
+            pcor_rst.loc[idx,'A'] = a
+            pcor_rst.loc[idx,'B'] = b
+            pcor_rst.loc[idx,'corr'] = cor_rst.loc[idx,'corr']
+            pcor_rst.loc[idx,'pcorr'] = pcor
+    pcor_rst.reset_index(drop=True,inplace=True)
+    print("Validation w.r.t Partial-Correlation by KOSPI : {}".format(len(pcor_rst)))
+        
+    """ 3) CoIntegration & 4) Coeff Estimation """
+    # Curious about negative cointeg coeff
+    cointeg_rst = pd.DataFrame(columns = ['A','B','corr','pcorr','cointeg'])
+    for idx in range(len(pcor_rst)):
+        a = pcor_rst.loc[idx,'A']
+        b = pcor_rst.loc[idx,'B']
+        coint_result = coint(log_pr[a], log_pr[b])
+        tmp_coeff, tmp_pvalue = coint_result[0], coint_result[1]
+        if tmp_pvalue <= cutoff :
+            min_pvalue = tmp_pvalue
+            best_coeff = tmp_coeff
+        else :
+            continue
+            min_pvalue = 1.0
+            best_coeff = -999.9
+        
+        for eta in [0.1*i for i in range(1,41)]:
+            spread = log_pr[a] - log_pr[b] * eta
+            adfuller_rst = adfuller(spread)
+            if adfuller_rst[1] <= cutoff:
+                if adfuller_rst[1] < min_pvalue:
+                    min_pvalue = adfuller_rst[1]
+                    best_coeff = eta
+                else :
+                    pass
+        if best_coeff != -999.9:
+            cointeg_rst.loc[idx,'A'] = a
+            cointeg_rst.loc[idx,'B'] = b
+            cointeg_rst.loc[idx,'corr'] = pcor_rst.loc[idx,'corr']
+            cointeg_rst.loc[idx,'pcorr'] = pcor_rst.loc[idx,'pcorr']
+            cointeg_rst.loc[idx,'cointeg'] = best_coeff
+    cointeg_rst.reset_index(drop=True, inplace=True)
+    print("Validation w.r.t CoIntegration : {}".format(len(cointeg_rst)))
+    
+    """ 5) Spread Estimation """
+    # 6) no need to check trend since we did stationarity trend test
+    valid_idx = []
+    for idx in range(len(cointeg_rst)):
+        a = cointeg_rst.loc[idx,'A']
+        b = cointeg_rst.loc[idx,'B']
+        coint_coeff = cointeg_rst.loc[idx,'cointeg']
+        spread = log_pr[a] - log_pr[b] * coint_coeff
+        
+        """ 7) Normality """
+        if stats.shapiro(spread)[1] >= cutoff :
+            """ 8) Stationarity """
+            if adfuller(spread)[1] <= cutoff :
+                valid_idx.append(idx)
+    pairs = cointeg_rst[cointeg_rst.index.isin(valid_idx)]
+    pairs.reset_index(drop=True, inplace=True)
+    print("Validation w.r.t Normality & Stationarity : {}".format(len(pairs)))
+    
+    
+    """ 9) Risk & 10) Earnings with the number of trade"""
+    risk_ls = []
+    A_earning_ls = []
+    A_trade_ls = []
+    A_maxterm_ls = []
+    B_earning_ls = []
+    B_trade_ls = []
+    B_maxterm_ls = []
+    
+    for idx in range(len(pairs)):
+        a = pairs.loc[idx,'A']
+        b = pairs.loc[idx,'B']
+        coint_coeff = pairs.loc[idx,'cointeg']
+        spread = log_pr[a] - log_pr[b] * coint_coeff
+        risk_ls.append(spread.diff().std())
+        try :
+            earning, trade_num, max_term = ExpectedEarning_v2(a, b, coint_coeff, pr, enter=enter, position='A')
+            A_earning_ls.append((earning-1)*100)
+            A_trade_ls.append(trade_num)
+            A_maxterm_ls.append(max_term)
+        except :
+            A_earning_ls.append(-999)
+            A_trade_ls.append(-999)
+            A_maxterm_ls.append(-999)
+        try:
+            earning, trade_num, max_term = ExpectedEarning_v2(a, b, coint_coeff, pr, enter=enter, position='B')
+            B_earning_ls.append((earning-1)*100)
+            B_trade_ls.append(trade_num)
+            B_maxterm_ls.append(max_term)
+        except:
+            B_earning_ls.append(-999)
+            B_trade_ls.append(-999)
+            B_maxterm_ls.append(-999)
+
+        
+    pairs['risk'] = risk_ls
+    pairs['A_earnings(%)'] = A_earning_ls
+    pairs['A_trade#'] = A_trade_ls
+    pairs['A_maxterm'] = A_maxterm_ls
+    pairs['B_earnings(%)'] = B_earning_ls
+    pairs['B_trade#'] = B_trade_ls
+    pairs['B_maxterm'] = B_maxterm_ls
+
+    print("Adding Risk & Earnings & #Trade & #UpCut")
+    """ 11) Difference Correlation """
+    pairs = DiffCorrelation(pairs, log_pr, cutoff=cutoff)
+    print("Validation w.r.t Diff-Correlation : {}".format(len(pairs)))
+    """ 12) Add AvgVol & AvgMCPRate """
+    pairs = AddVolMcp(pairs).sort_values(by=['cointeg'],ascending=False).reset_index(drop=True)
+    
+    
+    """ 13) Checking whole results on TEST Period """
+    """ CoInteg + Stationary + Normality + Corr """
+    survive_ls = []
+    for idx, row in pairs.iterrows():
+        a = row.A
+        b = row.B
+        eta = row.cointeg
+        a_val = log_real_pr[a]
+        b_val = log_real_pr[b]
+        real_spread = a_val - b_val * eta
+        if coint(a_val, b_val)[1] <= cutoff:
+            if adfuller(real_spread)[1] <= cutoff:
+                if stats.shapiro(real_spread)[1] >= cutoff :
+                    survive_ls.append(idx)
+                    #tmp = stats.pearsonr(a_val, b_val)
+                    #if tmp[0]>=0 and tmp[1] <= cutoff:
+                    #    survive_ls.append(idx)
+    
+#     """ 14) Best Funda Quantile Pattern Check """
+#     FundaScore_A = []
+#     FundaScore_B = []
+#     if int(real_end[4:6])>=4:
+#         dt = str(int(real_end[:4])-1)+'-12'
+#         score_dict = FundaMatch(dt, byFunda=byFunda)
+#         for idx, row in pairs.iterrows():
+#             a = row.A
+#             b = row.B
+#             try :
+#                 FundaScore_A.append(score_dict[a])
+#             except :
+#                 FundaScore_A.append(0)
+#             try :
+#                 FundaScore_B.append(score_dict[b])
+#             except :
+#                 FundaScore_B.append(0)
+                
+#     else :
+#         dt = str(int(real_end[:4])-2)+'-12'
+#         score_dict = FundaMatch(dt, byFunda=byFunda)
+#         for idx, row in pairs.iterrows():
+#             a = row.A
+#             b = row.B
+#             try :
+#                 FundaScore_A.append(score_dict[a])
+#             except :
+#                 FundaScore_A.append(0)
+#             try :
+#                 FundaScore_B.append(score_dict[b])
+#             except :
+#                 FundaScore_B.append(0)
+#             #FundaScore_A.append(score_dict[a])
+#             #FundaScore_B.append(score_dict[b])
+#     pairs['A_Funda(+)'] = FundaScore_A
+#     pairs['B_Funda(+)'] = FundaScore_B
+    
+    """ 15) Spread Divergence Check """
+    divcheck_idx = []
+    for idx, row in pairs.iterrows():
+        a = row.A
+        b = row.B
+        coint_coeff = row.cointeg
+        if SpreadDiverge(a, b, coint_coeff, end, pr, real_pr, enter=2, ndays=ndays)[0] == False :
+            divcheck_idx.append(idx)
+    pairs = pairs[pairs.index.isin(divcheck_idx)]
+    print("Validation w.r.t Spread Divergence : {} survived.".format(len(divcheck_idx)))
+    
+        
+    return pairs, pairs[pairs.index.isin(survive_ls)]
