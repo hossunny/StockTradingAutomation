@@ -1816,7 +1816,8 @@ def PairTrading_v11(pr, start, end, real_start, real_end, byFunda='all', up_cut=
     print("Validation w.r.t Correlation : {}".format(len(cor_rst)))
     
     """ 2) Partial Correlation """
-    ksp = pd.read_hdf("./FullCache/KOSPI_close.h5")
+    #ksp = pd.read_hdf("./FullCache/KOSPI_close.h5")
+    ksp = pd.read_hdf("./FullCache/KOSPI_lv2.h5")
     ksp = ksp[(ksp.index>=start)&(ksp.index<=end)]
     pcor_rst = pd.DataFrame(columns = ['A','B','corr','pcorr'])
     for idx in range(len(cor_rst)):

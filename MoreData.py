@@ -633,3 +633,145 @@ def SectorNThemaCodeGen(url):
 # total_dict['게임'] = list(set(set(SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=265')).union(set(SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=42')))))
 # total_dict['전자결제'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=272')
 # total_dict['5G'] = SectorNThemaCodeGen('https://finance.naver.com/sise/sise_group_detail.nhn?type=theme&no=373')
+
+###################################################################################################
+
+def GetDailyKOSPI_lv1(today='2021-02-25'):
+    
+    end = today.replace('-','')
+    
+    url = 'https://m.stock.naver.com/api/json/sise/dailySiseIndexListJson.nhn?code=KOSPI&pageSize=100'
+    res = requests.get(url,headers={"User-Agent":"Chrome 88 on Windows 10"})
+    rst = res.text
+    tmp = res.json()
+    kospi = pd.DataFrame(tmp['result']['siseList'])
+    kospi['dt'] = kospi['dt'].astype(str)
+    
+    original = pd.read_hdf("./FullCache/KOSPI.h5")
+    print("original size : {}".format(original.shape))
+    
+    last_date = max(original.dt.values)
+    new_kospi = kospi[lambda x : x['dt'] > last_date]
+    print("update size : {}".format(new_kospi.shape))
+    
+    original = pd.concat([new_kospi,original])
+    print("merged size : {}".format(original.shape))
+    
+    original.to_hdf("./FullCache/KOSPI.h5",key='kospi')
+    new_kospi.to_hdf("./FullCache/KOSPI_update_{}.h5".format(end),key='kospi')
+    
+    return True
+
+def GetDailyKOSPI_lv2(today='2021-02-25'):
+    
+    if os.path.isfile(glob.glob("./FullCache/KOSPI_update_*.h5")[0]):
+        pass
+    else :
+        raise ValueError("lv1 update file does not exist!!!")
+        
+    tmp = pd.read_hdf(glob.glob("./FullCache/KOSPI_update_*.h5")[0])
+    total = pd.read_hdf("./FullCache/KOSPI_lv2.h5")
+    print('total size : {}'.format(total.shape))
+    
+    dates = [dt[:4]+'-'+dt[4:6]+'-'+dt[6:8] for dt in list(tmp.dt.values)]
+    tmp.index = dates
+    tmp = tmp[['ncv']].sort_index()
+    tmp.columns = ['close']
+    print("update size : {}".format(tmp.shape))
+    assert len(tmp)!=0
+    total = pd.concat([total,tmp]).sort_index()
+    print("merged size : {}".format(total.shape))
+    total.to_hdf("./FullCache/KOSPI_lv2.h5",key='kospi')
+    print("Daily lv2 KOSPI update is finished -> {} ~ {}".format(min(tmp.index), max(tmp.index)))
+    
+    os.remove(glob.glob("./FullCache/KOSPI_update_*.h5")[0])
+    return True
+
+def GetDailyPrice_lv1(today='2021-02-25'):
+    conn = pymysql.connect(host='localhost',user='root',
+                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+    all_codes = list(pd.read_sql("select * from company_info",conn).code.values)
+    all_codes = all_codes + ['005935','005385','066575']
+    print("The number of codes : {}".format(len(all_codes)))
+    errs = []
+    year = today[:4]
+    tmp_pr = pd.read_hdf("FullCache/Price/price_{}.h5".format(str(year)))
+    print('original size : {}'.format(tmp_pr.shape))
+    with open("TradingDates.pickle","rb") as fr:
+        trading_dates = pickle.load(fr)
+    start_date = pd.to_datetime(str(max(tmp_pr.DATE))).strftime("%Y-%m-%d")
+    start = start_date.replace('-','')
+    end = today.replace('-','')
+    total = pd.DataFrame()
+    assert start != end
+    print("Updating prices during : {} ~ {}".format(start_date, today))
+    for cd in all_codes :
+        try :
+            tmp = stock.get_market_ohlcv_by_date(start, end, cd, adjusted=True)
+            if len(tmp) == 0 :
+                errs.append(start+'|'+end+'|'+cd)
+            else :
+                tmp.rename(columns={'시가':'OPEN','고가':'high','저가':'low','종가':'adjprice','거래량':'volume'},inplace=True)
+                tmp.index.names = ['DATE']
+                tmp.reset_index(inplace=True)
+                tmp['CODE'] = '{:06d}'.format(int(cd))
+                tmp['CODE'] = tmp['CODE'].astype(str)
+                total = pd.concat([total, tmp])
+        except Exception as e:
+            print(e)
+            errs.append(start+'|'+end+'|'+cd)
+    total.reset_index(drop=True, inplace=True)
+    dates = [pd.to_datetime(str(e)).strftime("%Y-%m-%d") for e in list(total.DATE.values)]
+    total['DATE'] = dates
+    duplicates = list(total[total.DATE==start_date].index)
+    if len(duplicates) != 0 :
+        total.drop(index=duplicates, axis=0, inplace=True)
+    
+    new_df = total.copy()
+    new_df.to_hdf("./FullCache/Price/price_update_{}.h5".format(end),key='price')
+    total = pd.concat([tmp_pr, total])
+    dates = [pd.to_datetime(str(e)).strftime("%Y-%m-%d") for e in list(total.DATE.values)]
+    total['DATE'] = dates
+    #total.to_hdf("./FullCache/Price/price_{}.h5".format(str(year)),key='price')
+    print('merged size : {}'.format(total.shape))
+    print("Daily lv1 Price update is finished -> {} ~ {}".format(min(dates), max(dates)))
+    return new_df, total, errs
+
+def GetDailyPrice_lv2(today='2021-02-25'):
+    year = today[:4]
+    original_pr = pd.read_hdf("./FullCache/Price/lv2_price_{}.h5".format(str(year)))
+    total_pr = pd.read_hdf("./FullCache/Price/lv2_price_total.h5")
+    if os.path.isfile(glob.glob("./FullCache/Price/price_update_*.h5")[0]):
+        pass
+    else :
+        raise ValueError("lv1 update file does not exist!!!")
+    tmp_pr = pd.read_hdf(glob.glob("./FullCache/Price/price_update_*.h5")[0])
+    print('original size : {}'.format(original_pr.shape))
+    print('total size : {}'.format(total_pr.shape))
+    
+    tmp_lv2 = lv2(tmp_pr)
+    assert len(tmp_lv2)!=0
+    print('update size : {}'.format(tmp_lv2.shape))
+    total_pr = pd.concat([total_pr,tmp_lv2]).sort_index()
+    original_pr = pd.concat([original_pr,tmp_lv2]).sort_index()
+    
+    total_pr.to_hdf("./FullCache/Price/lv2_price_total.h5",key='price')
+    original_pr.to_hdf("./FullCache/Price/lv2_price_{}.h5".format(str(year)),key='price')
+    print('merged size : {}'.format(original_pr.shape))
+    print("Daily lv2 Price update is finished -> {} ~ {}".format(min(tmp_lv2.index), max(tmp_lv2.index)))
+    
+    os.remove(glob.glob("./FullCache/Price/price_update_*.h5")[0])
+    
+    return True
+
+def lv2(df):
+    codes = list(set(df.CODE.values))
+    total = pd.DataFrame()
+    for cd in codes :
+        tmp = df[lambda x : x['CODE']==cd]
+        tmp.index = list(tmp.DATE.values)
+        tmp = tmp[['adjprice']]
+        tmp.sort_index(inplace=True)
+        tmp.columns = [cd]
+        total = pd.concat([total,tmp],axis=1)
+    return total
