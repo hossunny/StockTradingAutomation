@@ -3,4 +3,4 @@
 ./FullCache
 *.pickle
 ./FullCache_bk
-./nothing
+./nothing/*
