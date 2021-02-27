@@ -775,3 +775,63 @@ def lv2(df):
         tmp.columns = [cd]
         total = pd.concat([total,tmp],axis=1)
     return total
+
+def GetMarcapCrawler(today='2021-02-25'):
+    driver_path = "C:/Users/Bae Kyungmo/OneDrive/Desktop/WC_basic/chromedriver.exe"
+    url = "http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201"
+    browser = Chrome(driver_path)
+    browser.maximize_window()
+    browser.get(url)
+    pyautogui.moveTo(262, 484, duration=1.0)
+    pyautogui.click()
+    pyautogui.moveTo(301, 521, duration=1.0)
+    pyautogui.click()
+    pyautogui.moveTo(323, 549, duration=1.0)
+    pyautogui.click()
+    pyautogui.moveTo(732, 419, duration=1.0)
+    pyautogui.doubleClick()
+    browser.find_elements_by_xpath('//*[@id="trdDd"]')[0].send_keys(today.replace('-',''))
+    pyautogui.moveTo(1580, 377, duration=1.0)
+    pyautogui.click()
+    time.sleep(1)
+    pyautogui.moveTo(1647, 473, duration=1.0)
+    pyautogui.click()
+    pyautogui.moveTo(1550, 608, duration=1.0)
+    pyautogui.click()
+    time.sleep(3)
+    try :
+        fp = glob.glob("C:/Users/Bae Kyungmo/Downloads/data*")[0]
+    except :
+        raise ValueError("Update file is not downloaded!!!")
+    if os.path.isfile(fp):
+        to_fp = "./FullCache/marcap/marcap-{}.csv".format(today)
+        os.rename(fp, to_fp)
+    return to_fp
+
+def GetDailyMarcap(today='2021-02-25'):
+    with open("TradingDates.pickle","rb") as fr:
+        trading_dates = pickle.load(fr)
+    if today not in trading_dates:
+        print("The date is not a trading date.")
+        return False
+    year = today[:4]
+    total = pd.read_csv("./FullCache/marcap/marcap-{}.csv".format(year))
+    if len(total[lambda x : x['Date']==today])!=0:
+        print("Already data exist at that date.")
+        return False
+    fp = GetMarcapCrawler(today=today)
+    tmp = pd.read_csv(fp, encoding='cp949')
+    assert len(tmp)!=0
+    num_col = total.shape[1]
+    print("original size : {}".format(total.shape))
+    tmp = tmp.rename(columns={'종목코드':'Code','종목명':'Name','종가':'Close','대비':'Changes','등락률':'ChagesRatio','거래량':'Volume','거래대금':'Amount',
+                   '시가':'Open','고가':'High','저가':'Low','시가총액':'Marcap','상장주식수':'Stocks','시장구분':'Market','소속부':'Dept'})
+    tmp['Date'] = today
+    print("update size : {}".format(tmp.shape))
+    total = pd.concat([total,tmp]).sort_values(by=['Date']).reset_index(drop=True)
+    print("merged size : {}".format(total.shape))
+    total.to_csv("./FullCache/marcap/marcap-{}.csv".format(year),index=False)
+    print("updating marcap is finished.")
+    assert num_col == total.shape[1]
+    os.remove(fp)
+    return True
