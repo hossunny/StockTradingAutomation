@@ -1,4 +1,4 @@
-*.ipynb
+./*.ipynb
 *.log
 ./FullCache
 *.pickle
