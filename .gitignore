@@ -4,3 +4,6 @@
 *.pickle
 ./FullCache_bk
 nothing/
+.vscode
+.ipynb_checkpoints
+__pycache__
