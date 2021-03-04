@@ -83,8 +83,8 @@ class Loader:
     
     def GetPricelv1(self, start, end, code_ls=None):
         if code_ls == None :
-            code_ls = self.codes
-            code_ls += ['005935','005385','066575']
+            code_ls = self.codes + ['005935','005385','066575']
+#            code_ls += ['005935','005385','066575']
         start_year = start[:4]
         end_year = end[:4]
         if start_year == end_year:
@@ -99,8 +99,8 @@ class Loader:
     
     def GetPricelv2(self, start, end, code_ls=None):
         if code_ls == None:
-            code_ls = self.codes
-            code_ls += ['005935','005385','066575']
+            code_ls = self.codes + ['005935','005385','066575']
+#            code_ls += ['005935','005385','066575']
 #         start_year = start[:4]
 #         end_year = end[:4]
 #         if start_year == end_year:

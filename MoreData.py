@@ -732,7 +732,7 @@ def GetDailyPrice_lv1(today='2021-02-25'):
     total = pd.concat([tmp_pr, total])
     dates = [pd.to_datetime(str(e)).strftime("%Y-%m-%d") for e in list(total.DATE.values)]
     total['DATE'] = dates
-    #total.to_hdf("./FullCache/Price/price_{}.h5".format(str(year)),key='price')
+    total.to_hdf("./FullCache/Price/price_{}.h5".format(str(year)),key='price')
     print('merged size : {}'.format(total.shape))
     print("Daily lv1 Price update is finished -> {} ~ {}".format(min(dates), max(dates)))
     return new_df, total, errs
@@ -789,9 +789,12 @@ def GetMarcapCrawler(today='2021-02-25'):
     pyautogui.moveTo(323, 549, duration=1.0)
     pyautogui.click()
     pyautogui.moveTo(732, 419, duration=1.0)
+    time.sleep(12)
     pyautogui.doubleClick()
+    time.sleep(1)
     browser.find_elements_by_xpath('//*[@id="trdDd"]')[0].send_keys(today.replace('-',''))
     pyautogui.moveTo(1580, 377, duration=1.0)
+    time.sleep(1)
     pyautogui.click()
     time.sleep(1)
     pyautogui.moveTo(1647, 473, duration=1.0)
