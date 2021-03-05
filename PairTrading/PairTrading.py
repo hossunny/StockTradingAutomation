@@ -28,8 +28,9 @@ from scipy import stats
 import pyautogui
 from statsmodels.tsa.stattools import coint, adfuller
 from sklearn.linear_model import LinearRegression
-import Loader
-ldr = Loader.Loader()
+import matplotlib.font_manager as fm
+import Loader_v2
+ldr = Loader()
 conn = pymysql.connect(host='localhost',user='root',
                                    password='*',db='INVESTAR',charset='utf8')
 
