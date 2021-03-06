@@ -25,7 +25,7 @@ import shutil
 class Loader:
     def __init__(self):
         self.conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='*********',db='INVESTAR',charset='utf8')
         with self.conn.cursor() as curs:
             sql_load = """
             SELECT CODE, COMPANY FROM COMPANY_INFO

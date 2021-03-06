@@ -387,8 +387,8 @@ def FundaPattern_v2(end_dt = '2019-12'):
             rst = pd.concat([rst,tmp])
     return rst
 
-def FundaMatch(dt, byFunda='all'):
-    conn = pymysql.connect(host='localhost',user='root', password='tlqkfdk2',db='INVESTAR',charset='utf8')
+def FundaMatch(dt, pwd,byFunda='all'):
+    conn = pymysql.connect(host='localhost',user='root', password=pwd,db='INVESTAR',charset='utf8')
     company = pd.read_sql("select * from company_info", conn)
     if dt == '2019-12':
         best_funda = pd.read_hdf("FullCache/BestFundaPattern.h5")
@@ -687,9 +687,9 @@ def GetDailyKOSPI_lv2(today='2021-02-25'):
     os.remove(glob.glob("./FullCache/KOSPI_update_*.h5")[0])
     return True
 
-def GetDailyPrice_lv1(today='2021-02-25'):
+def GetDailyPrice_lv1(today='2021-02-25',pwd='****'):
     conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password=pwd,db='INVESTAR',charset='utf8')
     all_codes = list(pd.read_sql("select * from company_info",conn).code.values)
     all_codes = all_codes + ['005935','005385','066575']
     print("The number of codes : {}".format(len(all_codes)))

@@ -31,7 +31,7 @@ from sklearn.linear_model import LinearRegression
 import Loader
 ldr = Loader.Loader()
 conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='******',db='INVESTAR',charset='utf8')
 
 
 def Correlation_v2(log_pr, cutoff=0.05):

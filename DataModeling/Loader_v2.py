@@ -24,9 +24,9 @@ warnings.filterwarnings(action='ignore')
 import shutil
 
 class Loader:
-    def __init__(self):
+    def __init__(self, pwd):
         self.conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password=pwd,db='INVESTAR',charset='utf8')
         with self.conn.cursor() as curs:
             sql_load = """
             SELECT CODE, COMPANY, SECTOR FROM COMPANY_INFO
@@ -146,4 +146,7 @@ class Loader:
             return lv2_funda
             
 if __name__ == '__main__':
-    loader = Loader()
+    print("=== Insert MariaDB password ===")
+    argument = sys.argv
+    del argument[0]
+    loader = Loader(argument[0])
