@@ -7,4 +7,4 @@ nothing/
 .vscode
 .ipynb_checkpoints
 __pycache__/
-./FullCache/Price/lv2_price_total.h5
+FullCache/Price/lv2_price_total.h5
