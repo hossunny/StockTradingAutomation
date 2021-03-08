@@ -24,9 +24,9 @@ warnings.filterwarnings(action='ignore')
 import shutil
 
 class Loader:
-    def __init__(self):
+    def __init__(self, pwd):
         self.conn = pymysql.connect(host='localhost',user='root',
-                                   password='*',db='INVESTAR',charset='utf8')
+                                   password=pwd,db='INVESTAR',charset='utf8')
         with self.conn.cursor() as curs:
             sql_load = """
             SELECT CODE, COMPANY, SECTOR FROM COMPANY_INFO
@@ -38,7 +38,8 @@ class Loader:
             self.sectors = [str(e[2]) for e in comps_ls]
             
         self.conn.commit()
-        with open("./TradingDates.pickle", "rb") as fr:
+        self.DataPath = 'C:\\Users\\Bae Kyungmo\\OneDrive\\Desktop\\StockTraidingAutomation\\FullCache\\'
+        with open(self.DataPath+"TradingDates.pickle", "rb") as fr:
             self.td_days = pickle.load(fr)
         self.items = ['매출액', '영업이익', '영업이익(발표기준)', '세전계속사업이익', '당기순이익', '당기순이익(지배)', '당기순이익(비지배)', '자산총계',
                      '부채총계', '자본총계', '자본총계(지배)', '자본총계(비지배)', '자본금', '영업활동현금흐름', '투자활동현금흐름', '재무활동현금흐름',
@@ -88,11 +89,11 @@ class Loader:
         start_year = start[:4]
         end_year = end[:4]
         if start_year == end_year:
-            pr = pd.read_hdf("FullCache/Price/price_{}.h5".format(start_year))
+            pr = pd.read_hdf(self.DataPath+"Price/price_{}.h5".format(start_year))
         else :
             pr = pd.DataFrame()
             for y in range(int(start_year), int(end_year)+1):
-                tmp_pr = pd.read_hdf("FullCache/Price/price_{}.h5".format(str(y)))
+                tmp_pr = pd.read_hdf(self.DataPath+"Price/price_{}.h5".format(str(y)))
                 pr = pd.concat([pr, tmp_pr])
         pr = pr[(pr.DATE>=start)&(pr.DATE<=end)&(pr.CODE.isin(code_ls))].sort_values(by=['DATE'])
         return pr
@@ -100,7 +101,17 @@ class Loader:
     def GetPricelv2(self, start, end, code_ls=None):
         if code_ls == None:
             code_ls = self.codes + ['005935','005385','066575']
-        pr = pd.read_hdf("FullCache/Price/lv2_price_total.h5")
+#            code_ls += ['005935','005385','066575']
+#         start_year = start[:4]
+#         end_year = end[:4]
+#         if start_year == end_year:
+#             pr = pd.read_hdf("FullCache/Price/lv2_price_{}.h5".format(start_year))
+#         else :
+#             pr = pd.DataFrame()
+#             for y in range(int(start_year), int(end_year)+1):
+#                 tmp_pr = pd.read_hdf("FullCache/Price/lv2_price_{}.h5".format(str(y)))
+#                 pr = pd.concat([pr, tmp_pr])
+        pr = pd.read_hdf(self.DataPath+"Price/lv2_price_total.h5")
         for cd in code_ls : 
             if cd not in list(pr.columns):
                 pr[cd] = np.nan
@@ -108,13 +119,13 @@ class Loader:
         return pr
     
     def GetKOSPI(self, start, end):
-        kospi = pd.read_hdf("FullCache/KOSPI_lv2.h5")
+        kospi = pd.read_hdf(self.DataPath+"KOSPI_lv2.h5")
         kospi = kospi[(kospi.index>=start)&(kospi.index<=end)].sort_index()
         kospi.columns = ['KOSPI']
         return kospi
     
     def GetFunda(self, byDate='2019-12', code_ls=None, itm=None, level=1):
-        funda = pd.read_hdf("FullCache/FUNDA_total.h5")
+        funda = pd.read_hdf(self.DataPath+"/FUNDA_total.h5")
         if code_ls == None :
             code_ls = self.codes
             code_ls += ['005935','005385','066575']
@@ -135,4 +146,7 @@ class Loader:
             return lv2_funda
             
 if __name__ == '__main__':
-    loader = Loader()
+    print("=== Insert MariaDB password ===")
+    argument = sys.argv
+    del argument[0]
+    loader = Loader(argument[0])

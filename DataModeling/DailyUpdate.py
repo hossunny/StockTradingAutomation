@@ -838,3 +838,51 @@ def GetDailyMarcap(today='2021-02-25'):
     assert num_col == total.shape[1]
     os.remove(fp)
     return True
+
+def GetDailyPrice_lv1(today='2021-02-25'):
+    all_codes = ldr.codes + ['005935','005385','066575']
+    print("The number of codes : {}".format(len(all_codes)))
+    errs = []
+    year = today[:4]
+    tmp_pr = pd.read_hdf("../FullCache/Price/price_{}.h5".format(str(year)))
+    print('original size : {}'.format(tmp_pr.shape))
+    trading_dates = ldr.GetTradingDays()
+    assert today in trading_dates
+    start_date = pd.to_datetime(str(max(tmp_pr.DATE))).strftime("%Y-%m-%d")
+    start = start_date.replace('-','')
+    end = today.replace('-','')
+    total = pd.DataFrame()
+    assert start != end
+    print("Updating prices during : {} ~ {}".format(start_date, today))
+    for cd in all_codes :
+        try :
+            tmp = stock.get_market_ohlcv_by_date(start, end, cd, adjusted=True)
+            if len(tmp) == 0 :
+                errs.append(start+'|'+end+'|'+cd)
+            else :
+                tmp.rename(columns={'시가':'OPEN','고가':'high','저가':'low','종가':'adjprice','거래량':'volume'},inplace=True)
+                tmp.index.names = ['DATE']
+                tmp.reset_index(inplace=True)
+                tmp['CODE'] = '{:06d}'.format(int(cd))
+                tmp['CODE'] = tmp['CODE'].astype(str)
+                total = pd.concat([total, tmp])
+        except Exception as e:
+            print(e)
+            errs.append(start+'|'+end+'|'+cd)
+    assert len(total)!=0
+    total.reset_index(drop=True, inplace=True)
+    dates = [pd.to_datetime(str(e)).strftime("%Y-%m-%d") for e in list(total.DATE.values)]
+    total['DATE'] = dates
+    duplicates = list(total[total.DATE==start_date].index)
+    if len(duplicates) != 0 :
+        total.drop(index=duplicates, axis=0, inplace=True)
+    
+    new_df = total.copy()
+    new_df.to_hdf("../FullCache/Price/price_update_{}.h5".format(end),key='price')
+    total = pd.concat([tmp_pr, total])
+    dates = [pd.to_datetime(str(e)).strftime("%Y-%m-%d") for e in list(total.DATE.values)]
+    total['DATE'] = dates
+    total.to_hdf("../FullCache/Price/price_{}.h5".format(str(year)),key='price')
+    print('merged size : {}'.format(total.shape))
+    print("Daily lv1 Price update is finished -> {} ~ {}".format(min(dates), max(dates)))
+    return True
