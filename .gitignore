@@ -7,3 +7,5 @@ nothing/
 .vscode
 .ipynb_checkpoints
 __pycache__/
+PairTrading.ipynb
+MarketFactor.ipynb
