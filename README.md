@@ -5,7 +5,8 @@ Quantative Methods & Technical Approach for Stock Trading Automation.
 * Universe Screener : Fundamentals(Balance Sheet, Financial Summary, Volatility etc)를 통한 종목들 Filtering.
 * Pair-Trading : Distance Approach (Correlation/CoIntegration) based Pair-Trading을 통한 Pair-wise Signal Modeling.
 https://github.com/hossunny/StockTradingAutomation/blob/main/PairTrading/PairTrading_KOR.ipynb
-* Machine Learning : Short-term spread prediction (on going...)
+* Machine Learning 
+  * Short-term spread prediction : https://github.com/hossunny/StockTradingAutomation/blob/main/MachineLearning/SpreadPrediction_ML.ipynb
 * Text Mining : (not yet)
 
 ### Automation WorkFlow
