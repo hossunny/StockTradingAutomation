@@ -9,4 +9,4 @@ nothing/
 __pycache__/
 PairTrading.ipynb
 MarketFactor.ipynb
-./FullCache/Price/lv2_price_total.h5
+FullCache/Price/lv2_price_total.h5
