@@ -39,6 +39,8 @@ class Loader:
             
         self.conn.commit()
         self.DataPath = 'C:\\Users\\Bae Kyungmo\\OneDrive\\Desktop\\StockTraidingAutomation\\FullCache\\'
+        with open(self.DataPath+"Delist.pickle", "rb") as fr:
+            self.delist = pickle.load(fr)
         with open(self.DataPath+"TradingDates.pickle", "rb") as fr:
             self.td_days = pickle.load(fr)
         self.items = ['매출액', '영업이익', '영업이익(발표기준)', '세전계속사업이익', '당기순이익', '당기순이익(지배)', '당기순이익(비지배)', '자산총계',
@@ -51,6 +53,10 @@ class Loader:
         """Disconnecting MariaDB"""
         self.conn.close()
         
+    def CompanyInfo(self):
+        self.company_info = pd.read_sql("select * from company_info",self.conn)
+        return self.company_info
+    
     def FindCodeByName(self, comp_nm):
         idx = self.comps.index(comp_nm)
         return self.codes[idx]
@@ -98,7 +104,7 @@ class Loader:
         pr = pr[(pr.DATE>=start)&(pr.DATE<=end)&(pr.CODE.isin(code_ls))].sort_values(by=['DATE'])
         return pr
     
-    def GetPricelv2(self, start, end, code_ls=None):
+    def GetPricelv2_FAST(self, start, end, code_ls=None):
         if code_ls == None:
             code_ls = self.codes + ['005935','005385','066575']
 #            code_ls += ['005935','005385','066575']
@@ -118,6 +124,21 @@ class Loader:
         pr = pr[(pr.index>=start)&(pr.index<=end)][code_ls].sort_index()
         return pr
     
+    def GetPricelv2(self, start, end, code_ls=None):
+        if code_ls == None:
+            code_ls = self.codes + ['005935','005385','066575']
+        pr = pd.read_hdf(self.DataPath+"Price/lv2_price_total.h5")
+        for cd in code_ls : 
+            if cd not in list(pr.columns):
+                pr[cd] = np.nan
+            if cd in self.delist.keys():
+                pr_tmp = pr[cd].copy()
+                pr_tmp[pr_tmp.index.isin(self.delist[cd])] = np.nan
+                pr[cd] = pr_tmp
+        pr = pr[(pr.index>=start)&(pr.index<=end)][code_ls].sort_index()
+        return pr
+
+
     def GetKOSPI(self, start, end):
         kospi = pd.read_hdf(self.DataPath+"KOSPI_lv2.h5")
         kospi = kospi[(kospi.index>=start)&(kospi.index<=end)].sort_index()

@@ -861,6 +861,8 @@ def GetDailyPrice_lv1(today='2021-02-25'):
                 errs.append(start+'|'+end+'|'+cd)
             else :
                 tmp.rename(columns={'시가':'OPEN','고가':'high','저가':'low','종가':'adjprice','거래량':'volume'},inplace=True)
+                if len(tmp[lambda x : x['volume']==0]) > 0 :
+                    continue
                 tmp.index.names = ['DATE']
                 tmp.reset_index(inplace=True)
                 tmp['CODE'] = '{:06d}'.format(int(cd))
@@ -886,3 +888,13 @@ def GetDailyPrice_lv1(today='2021-02-25'):
     print('merged size : {}'.format(total.shape))
     print("Daily lv1 Price update is finished -> {} ~ {}".format(min(dates), max(dates)))
     return True
+
+def DelistComplement():
+    pr1 = ldr.GetPricelv1('2010-01-01','2021-03-10')
+    pr1 = pr1[lambda x : x['volume']==0]
+    dl_codes = list(set(pr1.CODE.values))
+    delist_dict = {}
+    for cd in dl_codes:
+        tmp = pr1[pr1.CODE==cd].sort_values(by=['DATE'])
+        delist_dict[cd] = tmp.DATE.to_list()
+    return delist_dict
