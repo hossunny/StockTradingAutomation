@@ -142,6 +142,25 @@ class Loader:
     #     pr = pr[(pr.index>=start)&(pr.index<=end)][code_ls].sort_index()
     #     return pr
 
+    def GetVolumelv2(self, start, end, code_ls=None):
+        if code_ls == None:
+            code_ls = self.codes + ['005935','005385','066575']
+        volume = pd.read_hdf(self.DataPath+"VOLUME_lv2.h5")
+        for cd in code_ls : 
+            if cd not in list(volume.columns):
+                volume[cd] = np.nan
+        volume = volume[(volume.index>=start)&(volume.index<=end)][code_ls].sort_index()
+        return volume
+
+    def GetMarcaplv2(self, start, end, code_ls=None):
+        if code_ls == None:
+            code_ls = self.codes + ['005935','005385','066575']
+        marcap = pd.read_hdf(self.DataPath+"marcap/lv2_marcap_total.h5")
+        for cd in code_ls : 
+            if cd not in list(marcap.columns):
+                marcap[cd] = np.nan
+        marcap = marcap[(marcap.index>=start)&(marcap.index<=end)][code_ls].sort_index()
+        return marcap
 
     def GetKOSPI(self, start, end):
         kospi = pd.read_hdf(self.DataPath+"KOSPI_lv2.h5")

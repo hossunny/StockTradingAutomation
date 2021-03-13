@@ -898,3 +898,67 @@ def DelistComplement():
         tmp = pr1[pr1.CODE==cd].sort_values(by=['DATE'])
         delist_dict[cd] = tmp.DATE.to_list()
     return delist_dict
+
+def lv2_volume(tdf):
+    df = tdf[lambda x : x['Volume']!=0]
+    codes = sorted(list(set(df.Code.values)))
+    total = pd.DataFrame()
+    for cd in codes :
+        tmp = df[lambda x : x['Code']==cd]
+        tmp.index = sorted(list(tmp.Date.values))
+        tmp = tmp[['Volume']]
+        tmp.sort_index(inplace=True)
+        tmp.columns = [cd]
+        total = pd.concat([total,tmp],axis=1)
+    return total
+
+def lv2_marcap(tdf):
+    df = tdf[lambda x : x['Volume']!=0]
+    codes = sorted(list(set(df.Code.values)))
+    total = pd.DataFrame()
+    for cd in codes :
+        tmp = df[lambda x : x['Code']==cd]
+        tmp.index = sorted(list(tmp.Date.values))
+        tmp = tmp[['Marcap']]
+        tmp.sort_index(inplace=True)
+        tmp.columns = [cd]
+        total = pd.concat([total,tmp],axis=1)
+    return total
+
+def GetDailyMarcap_lv1_lv2(today='2021-02-25'):
+    with open("../FullCache/TradingDates.pickle","rb") as fr:
+        trading_dates = pickle.load(fr)
+    if today not in trading_dates:
+        print("The date is not a trading date.")
+        return False
+    year = today[:4]
+    total = pd.read_csv("../FullCache/marcap/marcap-{}.csv".format(year))
+    if len(total[lambda x : x['Date']==today])!=0:
+        print("Already data exist at that date.")
+        return False
+    fp = GetMarcapCrawler(today=today)
+    tmp = pd.read_csv(fp, encoding='cp949')
+    assert len(tmp)!=0
+    num_col = total.shape[1]
+    print("original size : {}".format(total.shape))
+    tmp = tmp.rename(columns={'종목코드':'Code','종목명':'Name','종가':'Close','대비':'Changes','등락률':'ChagesRatio','거래량':'Volume','거래대금':'Amount',
+                   '시가':'Open','고가':'High','저가':'Low','시가총액':'Marcap','상장주식수':'Stocks','시장구분':'Market','소속부':'Dept'})
+    tmp['Date'] = today
+    print("update size : {}".format(tmp.shape))
+    total = pd.concat([total,tmp]).sort_values(by=['Date']).reset_index(drop=True)
+    print("merged size : {}".format(total.shape))
+    total.to_csv("../FullCache/marcap/marcap-{}.csv".format(year),index=False)
+    print("updating marcap is finished.")
+    assert num_col == total.shape[1]
+    
+    vol_lv2 = pd.read_hdf("../FullCache/VOLUME_lv2.h5")
+    update_vol = lv2_volume(tmp)
+    vol_lv2 = pd.concat([vol_lv2, update_vol]).sort_index()
+    vol_lv2.to_hdf("../FullCache/VOLUME_lv2.h5")
+    
+    total_lv2 = pd.read_hdf("../FullCache/marcap/lv2_marcap_total.h5")
+    update_lv2 = lv2_marcap(tmp)
+    total_lv2 = pd.concat([total_lv2, update_lv2]).sort_index()
+    total_lv2.to_hdf("../FullCache/marcap/lv2_marcap_total.h5",key='marcap')
+    os.remove(fp)
+    return True
