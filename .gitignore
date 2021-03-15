@@ -11,3 +11,6 @@ PairTrading.ipynb
 MarketFactor.ipynb
 FullCache/Price/lv2_price_total.h5
 DataModeling/DailyUpdate.ipynb
+DataModeling/DelistNSuspension.ipynb
+FullCache/marcap/lv2_marcap_total.h5
+FullCache/VOLUME_lv2.h5

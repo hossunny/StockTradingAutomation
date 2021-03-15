@@ -951,11 +951,13 @@ def GetDailyMarcap_lv1_lv2(today='2021-02-25'):
     print("updating marcap is finished.")
     assert num_col == total.shape[1]
     
+    print("making daily volume update using new marcap")
     vol_lv2 = pd.read_hdf("../FullCache/VOLUME_lv2.h5")
     update_vol = lv2_volume(tmp)
     vol_lv2 = pd.concat([vol_lv2, update_vol]).sort_index()
-    vol_lv2.to_hdf("../FullCache/VOLUME_lv2.h5")
+    vol_lv2.to_hdf("../FullCache/VOLUME_lv2.h5",key='volume')
     
+    print("making daily marcap update using new marcap")
     total_lv2 = pd.read_hdf("../FullCache/marcap/lv2_marcap_total.h5")
     update_lv2 = lv2_marcap(tmp)
     total_lv2 = pd.concat([total_lv2, update_lv2]).sort_index()
