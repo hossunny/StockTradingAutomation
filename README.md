@@ -7,6 +7,9 @@ Quantative Methods & Technical Approach for Stock Trading Automation.
 https://github.com/hossunny/StockTradingAutomation/blob/main/PairTrading/PairTrading_KOR.ipynb
 * Machine Learning 
   * Short-term spread prediction : https://github.com/hossunny/StockTradingAutomation/blob/main/MachineLearning/SpreadPrediction_ML.ipynb
+* Technical Indicator
+  * OBV (On-Balance Volume) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/OBV_ENG.ipynb
+* Volatility Breakout :
 * Text Mining : (not yet)
 
 ### Automation WorkFlow
