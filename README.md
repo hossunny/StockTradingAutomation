@@ -12,6 +12,7 @@ https://github.com/hossunny/StockTradingAutomation/blob/main/PairTrading/PairTra
   * MAC (Simple/Exponential Moving Average Crossover) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/MAC_ENG.ipynb
   * MACD (Moving Average Convergence Divergence) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/MACD_ENG.ipynb
   * RSI (Relative Strength Index) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/RSI_ENG.ipynb
+  * MFI (Money Flow Index) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/MFI_ENG.ipynb
 * Volatility Breakout :
 * Text Mining : (not yet)
 
