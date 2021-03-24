@@ -749,7 +749,7 @@ def GetDailyPrice_lv2(today='2021-02-25'):
     print('original size : {}'.format(original_pr.shape))
     print('total size : {}'.format(total_pr.shape))
     
-    tmp_lv2 = lv2(tmp_pr)
+    tmp_lv2 = lv2(tmp_pr).astype(float)
     assert len(tmp_lv2)!=0
     print('update size : {}'.format(tmp_lv2.shape))
     total_pr = pd.concat([total_pr,tmp_lv2]).sort_index()
@@ -867,6 +867,11 @@ def GetDailyPrice_lv1(today='2021-02-25'):
                 tmp.reset_index(inplace=True)
                 tmp['CODE'] = '{:06d}'.format(int(cd))
                 tmp['CODE'] = tmp['CODE'].astype(str)
+                tmp['OPEN'] = tmp['OPEN'].astype(int)
+                tmp['high'] = tmp['high'].astype(int)
+                tmp['low'] = tmp['low'].astype(int)
+                tmp['adjprice'] = tmp['adjprice'].astype(int)
+                tmp['volume'] = tmp['volume'].astype(int)
                 total = pd.concat([total, tmp])
         except Exception as e:
             print(e)
@@ -909,6 +914,7 @@ def lv2_volume(tdf):
         tmp = tmp[['Volume']]
         tmp.sort_index(inplace=True)
         tmp.columns = [cd]
+        tmp = tmp.astype(float)
         total = pd.concat([total,tmp],axis=1)
     return total
 
@@ -922,6 +928,7 @@ def lv2_marcap(tdf):
         tmp = tmp[['Marcap']]
         tmp.sort_index(inplace=True)
         tmp.columns = [cd]
+        tmp = tmp.astype(float)
         total = pd.concat([total,tmp],axis=1)
     return total
 
@@ -964,3 +971,17 @@ def GetDailyMarcap_lv1_lv2(today='2021-02-25'):
     total_lv2.to_hdf("../FullCache/marcap/lv2_marcap_total.h5",key='marcap')
     os.remove(fp)
     return True
+
+def CommaRemove(mm):
+    df = mm.copy()
+    for cd in df.columns :
+        tmp = df[[cd]].astype(str)
+        tmp = tmp[cd].map(lambda x : x.replace(',',''))
+        df[cd] = tmp.astype(float)
+    return df
+
+def FloatConvert(mm):
+    df = mm.copy()
+    for cd in df.columns :
+        df[cd] = df[[cd]].astype(float)
+    return df
