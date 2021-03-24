@@ -9,6 +9,7 @@ https://github.com/hossunny/StockTradingAutomation/blob/main/PairTrading/PairTra
   * Short-term spread prediction : https://github.com/hossunny/StockTradingAutomation/blob/main/MachineLearning/SpreadPrediction_ML.ipynb
 * Technical Indicator
   * OBV (On-Balance Volume) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/OBV_ENG.ipynb
+  * MACD (Moving Average Convergence Divergence) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/MACD_ENG.ipynb
 * Volatility Breakout :
 * Text Mining : (not yet)
 
