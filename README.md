@@ -14,6 +14,7 @@ https://github.com/hossunny/StockTradingAutomation/blob/main/PairTrading/PairTra
   * RSI (Relative Strength Index) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/RSI_ENG.ipynb
   * MFI (Money Flow Index) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/MFI_ENG.ipynb
   * Stochastic Oscillator : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/StochasticOscillator_ENG.ipynb
+  * Bollinger Bands : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/BollingerBands_ENG.ipynb
 * Volatility Breakout :
 * Text Mining : (not yet)
 
