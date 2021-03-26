@@ -15,6 +15,7 @@ https://github.com/hossunny/StockTradingAutomation/blob/main/PairTrading/PairTra
   * MFI (Money Flow Index) : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/MFI_ENG.ipynb
   * Stochastic Oscillator : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/StochasticOscillator_ENG.ipynb
   * Bollinger Bands : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/BollingerBands_ENG.ipynb
+  * Triple Screen Trading System : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/TripleScreen_ENG.ipynb
 * Volatility Breakout :
 * Text Mining : (not yet)
 
