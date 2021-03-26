@@ -16,7 +16,7 @@ https://github.com/hossunny/StockTradingAutomation/blob/main/PairTrading/PairTra
   * Stochastic Oscillator : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/StochasticOscillator_ENG.ipynb
   * Bollinger Bands : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/BollingerBands_ENG.ipynb
   * Triple Screen Trading System : https://github.com/hossunny/StockTradingAutomation/blob/main/TechnicalIndicator/TripleScreen_ENG.ipynb
-* Volatility Breakout :
+* Volatility Breakout : https://github.com/hossunny/StockTradingAutomation/blob/main/VolatilityBreakout/VolatilityBreakout_ENG.ipynb
 * Text Mining : (not yet)
 
 ### Automation WorkFlow
