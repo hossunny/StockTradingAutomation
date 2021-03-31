@@ -673,6 +673,64 @@ class TechnicalIndicator:
             df.loc[firstSell,'SellSignal'] = np.nan
         return df
 
+    def IBS_Signal(self, pr_df, buy=0.2, sell=0.8, least=0.02, worst=0.15):
+        pr = pr_df.copy()
+        pr['IBS'] = (pr['close'] - pr['low']) / (pr['high'] - pr['low'])
+        Buy=[]
+        Sell=[]
+        Buy.append(np.nan)
+        Sell.append(np.nan)
+        flag = -1
+        last_buy_price=0
+        for i in range(1,len(pr)):
+            if pr['IBS'][i-1] < buy and flag != 1:
+                Buy.append(pr['open'][i])
+                last_buy_price=pr['open'][i]
+                #Sell.append(pr['close'][i])
+                Sell.append(np.nan)
+                flag = 1
+            elif pr['IBS'][i-1] > sell and flag != 0 and pr['close'][i]/last_buy_price >= 1+least or pr['close'][i]/last_buy_price <= 1-worst:
+                Buy.append(np.nan)
+                Sell.append(pr['close'][i])
+                flag = 0
+            else :
+                Buy.append(np.nan)
+                Sell.append(np.nan)
+        pr['BuySignal'] = Buy
+        pr['SellSignal'] = Sell
+        firstSell = pr[pr['SellSignal'].notnull()].index[0]
+        firstBuy = pr[pr['BuySignal'].notnull()].index[0]
+        if firstBuy > firstSell : 
+            pr.loc[firstSell,'SellSignal'] = np.nan
+        return pr
+
+    def IBS_Run(self, start, end, code, buy=0.2, sell=0.8, least=0.2, worst=0.15, doplot=True):
+        pr = self.ldr.GetPricelv1(start, end, [code])
+        pr = pr.rename(columns={'adjprice':'close','OPEN':'open'})
+        pr.index = pr['DATE'].to_list()
+        pr = pr.drop(['DATE','CODE'],axis=1)
+        ibs = self.IBS_Signal(pr,buy=buy, sell=sell, least=least, worst=worst)
+        
+        if doplot :
+            plt.style.use('fivethirtyeight')
+            ibs[['IBS']].plot(figsize=(10,6))
+            plt.title("IBS for {}".format(code))
+        if doplot :
+            plt.figure(figsize=(8,6))
+            plt.scatter(ibs.index, ibs['BuySignal'], color='green',label='BuySignal',marker='^',alpha=1)
+            plt.scatter(ibs.index, ibs['SellSignal'], color='red',label='SellSignal',marker='v',alpha=1)
+            plt.plot(ibs['close'], label='Close Price', alpha=0.35)
+            plt.xticks([],rotation=45)
+            plt.title('IBS on {} during {} ~ {}'.format(code,start,end))
+            plt.xlabel('Date',fontsize=15)
+            plt.ylabel('Close Price KRW',fontsize=15)
+            plt.legend(loc='upper left')
+            plt.show()
+        _, rst = self.BackTest(ibs)
+        rst.index = [code]
+
+        return rst
+
     def BB_Run_v3(self, start, end, code,  ndays=14, sigma_lvl=2, buy=0.05, sell=0.95, doplot=True):
         print("==================== Description =====================")
         print("With II if II>0 and PB<0.05 buy, else II<0 and PB>0.95 sell.")
