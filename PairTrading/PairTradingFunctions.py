@@ -70,7 +70,7 @@ def PartialCorrelation_v2(df, x,y,kospi):
 
 def Filtering(dt, sc_codes, by=None):
     conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='*****',db='INVESTAR',charset='utf8')
     code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
     """Basic Filtering"""
     # 자본 총계가 하위 50% or 연평균(?합?) 거래량이 하위 30%
@@ -123,7 +123,7 @@ def Filtering(dt, sc_codes, by=None):
 
 def Filtering_v2(dt, sc_codes, by=None):
     conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='*****',db='INVESTAR',charset='utf8')
     code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
     """Basic Filtering"""
     # 자본 총계가 하위 50% or 연평균(?합?) 거래량이 하위 30%
@@ -892,7 +892,7 @@ def PairTrading_v8(pr, start, end, real_start, real_end, up_cut=0.2, down_cut=-0
     best_funda = pd.read_hdf("FullCache/BestFundaPattern.h5")
     sectors = list(set(best_funda.index))
     conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='*****',db='INVESTAR',charset='utf8')
     company = pd.read_sql("select * from company_info",conn)
     sector_codes = list(company[company.sector.isin(sectors)].code.values)
     most_sectors = list(set(log_pr.columns).intersection(set(sector_codes)))
@@ -1132,7 +1132,7 @@ def PairTrading_v9(pr, start, end, real_start, real_end, byFunda='all', up_cut=0
 #     best_funda = pd.read_hdf("FullCache/BestFundaPattern.h5")
 #     sectors = list(set(best_funda.index))
 #     conn = pymysql.connect(host='localhost',user='root',
-#                                    password='tlqkfdk2',db='INVESTAR',charset='utf8')
+#                                    password='*****',db='INVESTAR',charset='utf8')
 #     company = pd.read_sql("select * from company_info",conn)
 #     sector_codes = list(company[company.sector.isin(sectors)].code.values)
 #     most_sectors = list(set(log_pr.columns).intersection(set(sector_codes)))
@@ -1515,7 +1515,7 @@ def PairTrading_v10(pr, start, end, real_start, real_end, byFunda='all', up_cut=
 #     best_funda = pd.read_hdf("FullCache/BestFundaPattern.h5")
 #     sectors = list(set(best_funda.index))
 #     conn = pymysql.connect(host='localhost',user='root',
-#                                    password='tlqkfdk2',db='INVESTAR',charset='utf8')
+#                                    password='*****',db='INVESTAR',charset='utf8')
 #     company = pd.read_sql("select * from company_info",conn)
 #     sector_codes = list(company[company.sector.isin(sectors)].code.values)
 #     most_sectors = list(set(log_pr.columns).intersection(set(sector_codes)))
@@ -1744,7 +1744,7 @@ def PriceCompare(rst, pr, diff=10000, min_pr=8000, max_pr=150000):
 
 def UniverseFilter(dt):
     conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='*****',db='INVESTAR',charset='utf8')
     code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
     start_year = str(1+int(dt[:4]))
     start_date = start_year + '-04-01'

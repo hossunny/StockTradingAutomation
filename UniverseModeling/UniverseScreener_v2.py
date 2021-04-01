@@ -651,7 +651,7 @@ def FindCodesFunda(sc_df, fp_df, intersection=True):
 
 def UniverseFilter(dt):
     conn = pymysql.connect(host='localhost',user='root',
-                                   password='tlqkfdk2',db='INVESTAR',charset='utf8')
+                                   password='*****',db='INVESTAR',charset='utf8')
     code_ls = list(pd.read_sql("select code from company_info",conn).code.values)
     start_year = str(1+int(dt[:4]))
     start_date = start_year + '-04-01'
